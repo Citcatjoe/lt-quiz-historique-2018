@@ -1,0 +1,2206 @@
+{% use '_blocks.html.twig' %}
+
+<!DOCTYPE HTML>
+
+<html>
+
+	<head>
+		{{ block('head_brand') }}
+		<link rel="stylesheet" type="text/css" href="css/styles.css" />
+		<link rel="stylesheet" type="text/css" href="css/custom.css" />
+		<link rel="stylesheet" type="text/css" href="css/main.css" />
+		<link rel="stylesheet" type="text/css" href="css/loader.css" />
+		<link rel="stylesheet" type="text/css" href="css/bootstrap.min.css" />
+		<link rel="stylesheet" type="text/css" href="css/rotating-card.css" />
+		<link href='https://fonts.googleapis.com/css?family=Oswald:700' rel='stylesheet' type='text/css'>
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+		<link rel="stylesheet" type="text/css" href="css/perrin.css" />
+
+		<style>
+			h2 { padding: 1px; }
+		</style>
+		<script type="text/javascript" src="http://code.jquery.com/jquery-2.1.0.min.js"></script>
+		<script type="text/javascript" src="vendor/dombars.min.js"></script>
+
+		<script id="quiz_template" type="text/x-handlebars-template">
+		{% verbatim %}
+			<div class="quiz">
+				<div class="questions">
+					{{{outlet 'questions'}}}
+				</div>
+				<div class="results">
+					{{{outlet 'results'}}}
+				</div>
+			</div>
+		{% endverbatim %}
+		</script>
+
+		<!-- QUESTION -->
+		<script id="question_template" type="text/x-handlebars-template">
+		{% verbatim %}
+			<div class="question q{{{id}}}" style="width: 100%;">
+				<h6 style="color:#930025; font-family: 'Helvetica', 'Arial'; font-weight: 600;">Question {{{id}}}</h6>
+				<h1 style="background:{{color}}">{{{title}}}</h1>
+				<h1 style="background:{{color}}; font-style: normal;font-size: 1.3rem;">{{{subtitle}}}</h1>
+				<h2 style="background:{{color}}; font-style: normal; margin-bottom:30px;"><i class="fa fa-quote-left fa-lg fa-pull-left" aria-hidden="true" style="font-size: 30px !important;"></i><span>{{{prop1}}}</span></h2>
+				<h2 style="background:{{color}}; font-style: normal;clear:both;"><i class="fa fa-quote-left fa-lg fa-pull-left " aria-hidden="true" style="font-size: 30px !important;"></i><span>{{{prop2}}}</span></h2>
+				{{#if image}} <!--<img src="img/{{{image}}}" style="max-width: 400px; margin: 30px auto 0 auto;">--> {{/if}}
+				{{#if video}} <div class="video-wrapper"><iframe height="auto" src="{{ video }}?&theme=dark&autohide=2&cc_load_policy=1&showinfo=0"frameborder="0" frameborder="0" allowfullscreen></iframe></div> {{/if}}
+				<div class="answers">
+						{{{outlet 'answers'}}}
+				</div>
+			</div>
+		{% endverbatim %}
+		</script>
+
+		<script id="answer_template" type="text/x-handlebars-template">
+		{% verbatim %}
+			<div class="answer {{#if selected}}selected{{/if}}">
+				<div class="wrapper">
+				<div class="table">
+					<div class="text" style="background:{{parent.color}}">
+						{{text}}
+					</div>
+				</div>
+				</div>
+				<div class="footer">
+					<div class="checkbox"></div>
+				</div>
+			</div>
+		{% endverbatim %}		
+		</script>
+
+		<script id="result_template" type="text/x-handlebars-template">
+		{% verbatim %}
+				<div class="result {{#if selected}}selected{{/if}}" >
+					<div class="wrapper">
+						<h6>QUIZ</h6>
+						<h1 class="score">Votre score:</h1>
+						<p><b style="font-family: 'Helvetica', 'Arial'; font-weight: 900; font-size: 20px;">De 0 à 16 points: Caramba, encore raté!</b><br>Eh bien, ce n’est pas vraiment brillant! Soit vous avez pris un peu de haut ce test en y répondant au hasard ou à l’intuition, soit vous êtes tombé dans toutes les vicieuses chausse-trappes d’un parcours où il fallait de la mémoire. A moins que vous ne fouillassiez point ce truc qui s’appelle Internet et qui vous aurait évité la place près du radiateur. Révisez vos classiques pour ne pas tomber de la lune en 2018.</p>
+						
+						<p><b style="font-family: 'Helvetica', 'Arial'; font-weight: 900; font-size: 20px;">De 17 à 32 points: Peut mieux faire</b><br>Bien, bien! Se donne de la peine et en a, comme on dit. Surtout si vous n’atteignez pas les 24 points médians qui séparent les plus nuls des plus brillants. L’explication du score tient sans doute à votre profil psychologique: pas assez ou trop sûr de vous? Foin de verges, vous ne vous en tirez tout de même pas mal vu le niveau de difficulté. Montrez-vous peut-être plus curieux et plus attentif aux médias.</p>
+						
+						<p><b style="font-family: 'Helvetica', 'Arial'; font-weight: 900; font-size: 20px;">De 33 à 48 points: Expert en futur antérieur</b><br>Bravo! Quelle excellente culture générale et quelle mémoire… En cas de doute, vous avez aussi su vous tourner vers des sources d’information réputées fiables et ne pas vous contenter de Wikipédia. LeTemps.ch et LeTempsArchives.ch? En s’y plongeant avec patience, on pouvait y trouver toutes les réponses. Nul doute, vous allez briller dans les salons en cette année 2018, que nous vous souhaitons délicieuse.</p>
+						
+<!--						<p><b style="font-family: 'Helvetica', 'Arial'; font-weight: 900; font-size: 20px;">Entre 16 et 20</b><br>Vous êtes vraiment une grosse truite</p>-->
+						<!--<h4>A lire également:</h4>-->
+						<!--<p style="margin-bottom:0;">Mon premier <a style="color: #930025; font-weight: bold;" href="" target="blank">lien</a></p>-->
+						<!--<p style="margin-bottom:0;">Mon premier <a style="color: #930025; font-weight: bold;" href="" target="blank">lien</a></p>-->
+						
+						<!--<button id="bt_explications">Les réponses</button>-->
+						<h4><br>Partager ce quiz</h4>
+		{% endverbatim %}
+						<a target="blank" href="https://www.facebook.com/sharer.php?u={{ app.url }}&display=popup&ref=plugin&src=share_button"><i class="fa fa-facebook-official"></i></a>
+						<a target="blank" href="https://twitter.com/intent/tweet?text={{ description ~ ' ' ~ app.url ~ ' '|url_encode }}&via=letemps"><i class="fa fa-twitter-square"></i></a>
+						<a target="blank" href="https://www.linkedin.com/shareArticle?url={{ app.url }}&mini=true&title={{ title|url_encode }}&summary={{ description|url_encode }}&source={{ 'Le Temps'|url_encode }}"><i class="fa fa-linkedin-square"></i></a>
+		{% verbatim %}
+					</div>
+				</div>
+		{% endverbatim %}
+		</script>
+
+		<script type="text/javascript" src="PersonalityQuizzer.js"></script>
+
+		<script type="text/javascript">
+			var quiz = new PersonalityQuizzer();
+			quiz.set("title","What Number are you?");
+		</script>
+	</head>
+
+	<body style="padding-top: {{ navBarOffset }};">
+		{{ block('bar_brand') }}
+		<!-- <div class="overlay">
+			<img class="logo-lt-blanc" src="img/logo-lt-blanc.svg" alt="">
+			<div class="spinner">
+				<div class="double-bounce1"></div>
+				<div class="double-bounce2"></div>
+			</div>
+		</div>  -->
+
+		
+
+
+		
+			
+		
+	<aside>
+		<div class="gradient"></div>
+	</aside>
+
+	<div class="intro">
+		<h6>QUIZ</h6>
+		<h1>Le grand quiz historique de l’année 2018</h1>
+		<p>Ce questionnaire contient 48 affirmations (2 par mois) sur les grands événements de 2018, certaines sont vraies, d’autres fausses. Bonne chance...<br>
+		Une seule réponse est possible dans chaque cas.</p>
+		<button>Démarrer le quiz</button>
+		<p class="credits">Questions: Olivier Perrin.<br>Image: DW <br> Design: César Greppin/Lionel Rousseau/Vanessa Lam</p>
+		
+		
+		
+	</div>
+
+	<div class="content">
+		<div id="explications" class="results" style="display:none">
+			
+			<div class="result">
+			
+				<h1>Les réponses:</h1>
+				<p style="font-style: italic; font-size: 12px;">(Cliquez sur les cartes pour voir la deuxième partie)<br><br></p>
+				
+<!-------------------------------------------				-->
+				<div class="col-md-6 col-xs-12">	
+					<div class="card-container manual-flip">
+						<div class="card">
+							<div class="front">
+								<div class="card-content">
+									<div class="main">
+										<h3 class="name">20 janvier</h3>
+										<p class="profession">Investiture de Donald Trump à la Maison-Blanche</p>
+
+										<p class="text-center" style="font-style: italic; padding: 5%;">
+
+											<span style= "color:#930025">Question 1:</span><br>
+											Vrai ou faux? Voici pourquoi:<br><br>
+
+											<i class="fa fa-quote-left fa-lg fa-pull-left " aria-hidden="true" style="font-size: 22px !important; font-style: italic; color:#6E6E6E;"></i> Le président élu, Donald Trump, prêtera serment sur les marches du Capitole en prononçant la phrase suivante: «Je jure (ou affirme) solennellement que j’exécuterai loyalement la charge de président des Etats-Unis et que du mieux de mes capacités, je préserverai, protégerai et défendrai la Constitution.»<br><br>
+
+											<i class="fa fa-arrow-circle-o-right" aria-hidden="true" style="font-size: 22px !important; color:#6E6E6E;"></i> <span style= "color:#930025">FAUX.</span>Il ajoutera encore à la fin: «la Constitution... des Etats-Unis.»
+
+										</p>
+									</div>
+									<div class="footer">
+										<div class="rating">
+										</div>
+									</div>
+								</div>
+							</div> <!-- end front panel -->
+							<div class="back">
+								<div class="card-content">
+									<div class="main">
+										<h3 class="name">20 janvier</h3>
+										<p class="profession">Investiture de Donald Trump à la Maison-Blanche</p>
+
+										<p class="text-center" style="font-style: italic; padding: 5%;">
+
+											<span style= "color:#930025">Question 1:</span><br>
+											Vrai ou faux? Voici pourquoi:<br><br>
+
+											<i class="fa fa-quote-left fa-lg fa-pull-left " aria-hidden="true" style="font-size: 22px !important; font-style: italic; color:#6E6E6E;"></i> Donald Trump a été élu parce qu’une majorité de citoyens a voté pour lui, tout simplement.
+											<br><br>
+											<i class="fa fa-arrow-circle-o-right" aria-hidden="true" style="font-size: 22px !important; color:#6E6E6E;"></i> <span style= "color:#930025">FAUX.</span>Il était minoritaire dans le vote populaire, avec plus de 2,8 millions de voix d’écart en faveur de Hillary Clinton. Mais aux Etats-Unis, c’est le collège électoral des Etats (306 grands électeurs contre 232) qui prime.
+
+										</p>
+									</div>
+								</div>
+							</div> <!-- end back panel -->
+						</div> <!-- end card -->
+					</div> <!-- end card-container -->
+				</div>
+<!-------------------------------------------				-->
+
+				<div class="col-md-6 col-xs-12">
+					<div class="card-container manual-flip">
+						<div class="card">
+							<div class="front">
+								<div class="card-content">
+									<div class="main">
+										<h3 class="name">20 janvier</h3>
+										<p class="profession">Investiture de Donald Trump à la Maison-Blanche</p>
+
+										<p class="text-center" style="font-style: italic; padding: 5%;">
+
+											<span style= "color:#930025">Question 2:</span><br>
+											Vrai ou faux? Voici pourquoi:<br><br>
+
+											<i class="fa fa-quote-left fa-lg fa-pull-left " aria-hidden="true" style="font-size: 22px !important; font-style: italic; color:#6E6E6E;"></i> Donald Trump est le petit-fils de Friedrich Trump, un Bavarois qui a fait fortune dans les villes-champignons de la ruée vers l’or en Alaska, en gérant et en faisant construire restaurants et petits hôtels.<br><br>
+
+											<i class="fa fa-arrow-circle-o-right " aria-hidden="true" style="font-size: 22px !important; color:#6E6E6E;"></i><span style= "color:#930025">VRAI.</span> Son grand-père est né le 14 mars 1869 à Kallstadt (Royaume de Bavière) et est mort le 30 mars 1918 à New York.
+										</p>
+									</div>
+									<div class="footer">
+										<div class="rating">
+										</div>
+									</div>
+								</div>
+							</div> <!-- end front panel -->
+							<div class="back">
+								<div class="card-content">
+									<div class="main">
+										<h3 class="name">20 janvier</h3>
+										<p class="profession">Investiture de Donald Trump à la Maison-Blanche</p>
+
+										<p class="text-center" style="font-style: italic; padding: 5%;">
+
+											<span style= "color:#930025">Question 2:</span><br>
+											Vrai ou faux? Voici pourquoi:<br><br>
+
+											<i class="fa fa-quote-left fa-lg fa-pull-left " aria-hidden="true" style="font-size: 22px !important; font-style: italic; color:#6E6E6E;"></i> Donald Trump aurait déclaré, en mars 2011, avoir «arnaqué» l’ex-dictateur libyen Mouammar Kadhafi en disant: «Je ne veux pas utiliser le mot «niquer», mais je l’ai niqué.»
+											<br><br>
+											<i class="fa fa-arrow-circle-o-right " aria-hidden="true" style="font-size: 22px !important; color:#6E6E6E;"></i><span style= "color:#930025">VRAI.</span> C’était juste après lui avoir loué une partie d’un terrain et avoué que Kadhafi avait «payé plus pour une nuit que ce que valait le terrain pour deux ans». Et puis a-t-il ajouté: «Je ne l’ai pas laissé utiliser ce terrain.»
+
+										</p>
+									</div>
+								</div>
+							</div> <!-- end back panel -->
+						</div> <!-- end card -->
+					</div> <!-- end card-container -->
+				</div>
+			
+
+<!-------------------------------------------				-->
+			
+				<div class="col-md-6 col-xs-12">	
+				<div class="card-container manual-flip">
+					<div class="card">
+						<div class="front">
+							<div class="card-content">
+								<div class="main">
+									<h3 class="name">18 février</h3>
+									<p class="profession">Championnats du monde de ski à Saint-Moritz (GR)</p>
+
+									<p class="text-center" style="font-style: italic; padding: 5%;">
+
+										<span style= "color:#930025">Question 3:</span><br>
+										Vrai ou faux? Voici pourquoi:<br><br>
+
+										<i class="fa fa-quote-left fa-lg fa-pull-left " aria-hidden="true" style="font-size: 22px !important; font-style: italic; color:#6E6E6E;"></i> Les championnats du monde de ski alpin ont déjà eu lieu deux fois à Saint-Moritz. C’était en 1928 et en 1948.<br><br>
+
+										<i class="fa fa-arrow-circle-o-right" aria-hidden="true" style="font-size: 22px !important; color:#6E6E6E;"></i> <span style= "color:#930025">FAUX.</span> Ces deux années-là, il s’agissait des Jeux olympiques. Toutefois, les Championnats du monde ont déjà eu lieu à Saint-Moritz à quatre reprises: en 1934, 1948, 1974 et 2003.
+
+									</p>
+								</div>
+								<div class="footer">
+									<div class="rating">
+									</div>
+								</div>
+							</div>
+						</div> <!-- end front panel -->
+						<div class="back">
+							<div class="card-content">
+								<div class="main">
+									<h3 class="name">18 février</h3>
+									<p class="profession">Championnats du monde de ski à Saint-Moritz (GR)</p>
+
+									<p class="text-center" style="font-style: italic; padding: 5%;">
+
+										<span style= "color:#930025">Question 3:</span><br>
+										Vrai ou faux? Voici pourquoi:<br><br>
+
+										<i class="fa fa-quote-left fa-lg fa-pull-left " aria-hidden="true" style="font-size: 22px !important; font-style: italic; color:#6E6E6E;"></i> Cette compétition récompense les skieurs sur une seule épreuve, dans laquelle chaque pays ne peut aligner plus de quatre athlètes.
+										<br><br>
+										<i class="fa fa-arrow-circle-o-right" aria-hidden="true" style="font-size: 22px !important; color:#6E6E6E;"></i> <span style= "color:#930025">VRAI.</span> Cependant, les champions du monde en titre ne sont pas concernés par cette règle.
+
+									</p>
+								</div>
+							</div>
+						</div> <!-- end back panel -->
+					</div> <!-- end card -->
+				</div> <!-- end card-container -->
+			</div>
+<!-------------------------------------------				-->
+
+				<div class="col-md-6 col-xs-12">
+				<div class="card-container manual-flip">
+					<div class="card">
+						<div class="front">
+							<div class="card-content">
+								<div class="main">
+									<h3 class="name">18 février</h3>
+									<p class="profession">Championnats du monde de ski à Saint-Moritz (GR)</p>
+
+									<p class="text-center" style="font-style: italic; padding: 5%;">
+
+										<span style= "color:#930025">Question 4:</span><br>
+										Vrai ou faux? Voici pourquoi:<br><br>
+
+										<i class="fa fa-quote-left fa-lg fa-pull-left " aria-hidden="true" style="font-size: 22px !important; font-style: italic; color:#6E6E6E;"></i> Donald Trump est le petit-fils de Friedrich Trump, un Bavarois qui a fait fortune dans les villes-champignons de la ruée vers l’or en Alaska, en gérant et en faisant construire restaurants et petits hôtels.<br><br>
+
+										<i class="fa fa-arrow-circle-o-right " aria-hidden="true" style="font-size: 22px !important; color:#6E6E6E;"></i> <span style= "color:#930025">VRAI.</span> Seuls Marc Girardelli (combiné) et Frank Wörndl (slalom) avaient privé la Suisse de la totale. Les leaders avaient gagné chacun deux titres: Pirmin Zurbriggen en super-G et en géant, Maria Walliser en descente et en super-G, Erika Hess en combiné et en slalom.
+									</p>
+								</div>
+								<div class="footer">
+									<div class="rating">
+									</div>
+								</div>
+							</div>
+						</div> <!-- end front panel -->
+						<div class="back">
+							<div class="card-content">
+								<div class="main">
+									<h3 class="name">18 février</h3>
+									<p class="profession">Championnats du monde de ski à Saint-Moritz (GR)</p>
+
+									<p class="text-center" style="font-style: italic; padding: 5%;">
+
+										<span style= "color:#930025">Question 4:</span><br>
+										Vrai ou faux? Voici pourquoi:<br><br>
+
+										<i class="fa fa-quote-left fa-lg fa-pull-left " aria-hidden="true" style="font-size: 22px !important; font-style: italic; color:#6E6E6E;"></i> Donald Trump aurait déclaré, en mars 2011, avoir «arnaqué» l’ex-dictateur libyen Mouammar Kadhafi en disant: «Je ne veux pas utiliser le mot «niquer», mais je l’ai niqué.»
+										<br><br>
+										<i class="fa fa-arrow-circle-o-right " aria-hidden="true" style="font-size: 22px !important; color:#6E6E6E;"></i> <span style= "color:#930025">FAUX.</span> Il s’agissait des premiers éclairages électriques.
+
+									</p>
+								</div>
+							</div>
+						</div> <!-- end back panel -->
+					</div> <!-- end card -->
+				</div> <!-- end card-container -->
+			</div>
+
+		
+<!------------------------------------		-->
+
+				<div class="col-md-6 col-xs-12">	
+			<div class="card-container manual-flip">
+				<div class="card">
+					<div class="front">
+						<div class="card-content">
+							<div class="main">
+								<h3 class="name">23 mars</h3>
+								<p class="profession">Ouverture du salon horloger Baselworld</p>
+
+								<p class="text-center" style="font-style: italic; padding: 5%;">
+
+									<span style= "color:#930025">Question 5:</span><br>
+									Vrai ou faux? Voici pourquoi:<br><br>
+
+									<i class="fa fa-quote-left fa-lg fa-pull-left " aria-hidden="true" style="font-size: 22px !important; font-style: italic; color:#6E6E6E;"></i> Environ 11 000 journalistes de 70 pays étaient présents à Baselworld 2016.<br><br>
+
+									<i class="fa fa-arrow-circle-o-right" aria-hidden="true" style="font-size: 22px !important; color:#6E6E6E;"></i> <span style= "color:#930025">FAUX.</span> Ils étaient environ 4400. Mais ce sont 11 000 journalistes qui ont suivi en direct la conférence de presse inaugurale via Internet.
+
+								</p>
+							</div>
+							<div class="footer">
+								<div class="rating">
+								</div>
+							</div>
+						</div>
+					</div> <!-- end front panel -->
+					<div class="back">
+						<div class="card-content">
+							<div class="main">
+								<h3 class="name">23 mars</h3>
+								<p class="profession">Ouverture du salon horloger Baselworld</p>
+
+								<p class="text-center" style="font-style: italic; padding: 5%;">
+
+									<span style= "color:#930025">Question 5:</span><br>
+									Vrai ou faux? Voici pourquoi:<br><br>
+
+									<i class="fa fa-quote-left fa-lg fa-pull-left " aria-hidden="true" style="font-size: 22px !important; font-style: italic; color:#6E6E6E;"></i> La foire bâloise est unanimement célébrée par tous les représentants du biotope horloger mondial. «Notre industrie est ainsi faite. Nous nous retrouvons tous au printemps pour exhiber nos nouveautés. C’est dans notre ADN. On ne peut pas trinquer via WhatsApp», a fait remarquer Jean-Claude Biver à la mi-mars 2016.
+									<br><br>
+									<i class="fa fa-arrow-circle-o-right" aria-hidden="true" style="font-size: 22px !important; color:#6E6E6E;"></i> <span style= "color:#930025">FAUX.</span> Seule la dernière réflexion («trinquer avec WhatsApp») est de lui. La première partie est de Guillaume Tétû, cofondateur et ancien patron de la marque Hautlence.
+
+								</p>
+							</div>
+						</div>
+					</div> <!-- end back panel -->
+				</div> <!-- end card -->
+			</div> <!-- end card-container -->
+		</div>
+<!-------------------------------------------				-->
+
+				<div class="col-md-6 col-xs-12">
+			<div class="card-container manual-flip">
+				<div class="card">
+					<div class="front">
+						<div class="card-content">
+							<div class="main">
+								<h3 class="name">23 mars</h3>
+								<p class="profession">Ouverture du salon horloger Baselworld</p>
+
+								<p class="text-center" style="font-style: italic; padding: 5%;">
+
+									<span style= "color:#930025">Question 6:</span><br>
+									Vrai ou faux? Voici pourquoi:<br><br>
+
+									<i class="fa fa-quote-left fa-lg fa-pull-left " aria-hidden="true" style="font-size: 22px !important; font-style: italic; color:#6E6E6E;"></i> Le 15 avril 1917 a eu lieu la 1re Foire suisse d’horlogerie de Bâle. Les marques horlogères Tissot, Thommen, Longines et Ulysse Nardin faisaient partie des premiers exposants.<br><br>
+
+									<i class="fa fa-arrow-circle-o-right " aria-hidden="true" style="font-size: 22px !important; color:#6E6E6E;"></i> <span style= "color:#930025">FAUX.</span> Il s’agissait alors de la 1re Foire suisse d’échantillons. Un total de 831 entreprises de diverses branches de l’économie helvétique, comprenant l’industrie chimique et bancaire, les assurances, l’industrie du transport et du transport maritime, exposèrent dans le casino de la ville. Mais ces 6000 m2 de surface contenaient aussi un secteur horloger et bijoutier.
+								</p>
+							</div>
+							<div class="footer">
+								<div class="rating">
+								</div>
+							</div>
+						</div>
+					</div> <!-- end front panel -->
+					<div class="back">
+						<div class="card-content">
+							<div class="main">
+								<h3 class="name">23 mars</h3>
+								<p class="profession">Ouverture du salon horloger Baselworld</p>
+
+								<p class="text-center" style="font-style: italic; padding: 5%;">
+
+									<span style= "color:#930025">Question 6:</span><br>
+									Vrai ou faux? Voici pourquoi:<br><br>
+
+									<i class="fa fa-quote-left fa-lg fa-pull-left " aria-hidden="true" style="font-size: 22px !important; font-style: italic; color:#6E6E6E;"></i> En 2003, la foire Basel devient Baselworld, The Watch and Jewellery Show pour souligner son positionnement dans le luxe. La construction de la Messeturm est achevée. Avec ses 105 m, elle est la plus haute habitable de Suisse.
+									<br><br>
+									<i class="fa fa-arrow-circle-o-right " aria-hidden="true" style="font-size: 22px !important; color:#6E6E6E;"></i> <span style= "color:#930025">FAUX.</span> Depuis 2015, elle est devancée par la Tour Roche, aussi à Bâle (175 m), et par la Prime Tower de Zurich (126 m). 
+
+								</p>
+							</div>
+						</div>
+					</div> <!-- end back panel -->
+				</div> <!-- end card -->
+			</div> <!-- end card-container -->
+		</div>
+
+<!------------------------------------		-->
+			
+				<div class="col-md-6 col-xs-12">	
+				<div class="card-container manual-flip">
+					<div class="card">
+						<div class="front">
+							<div class="card-content">
+								<div class="main">
+									<h3 class="name">8 avril</h3>
+									<p class="profession">Ouverture de la foire d‘art documenta 14, à Athènes</p>
+
+									<p class="text-center" style="font-style: italic; padding: 5%;">
+
+										<span style= "color:#930025">Question 7:</span><br>
+										Vrai ou faux? Voici pourquoi:<br><br>
+
+										<i class="fa fa-quote-left fa-lg fa-pull-left " aria-hidden="true" style="font-size: 22px !important; font-style: italic; color:#6E6E6E;"></i> La documenta a été créée en 1955 à Kassel, pour permettre au public allemand de se réconcilier avec l’art moderne international après les années de dictature nazie.<br><br>
+
+										<i class="fa fa-arrow-circle-o-right" aria-hidden="true" style="font-size: 22px !important; color:#6E6E6E;"></i> <span style= "color:#930025">VRAI.</span> Il s’agissait de montrer les œuvres cataloguées comme «art dégénéré» par les nazis. La première exposition est centrée sur l’art abstrait.
+
+									</p>
+								</div>
+								<div class="footer">
+									<div class="rating">
+									</div>
+								</div>
+							</div>
+						</div> <!-- end front panel -->
+						<div class="back">
+							<div class="card-content">
+								<div class="main">
+									<h3 class="name">8 avril</h3>
+									<p class="profession">Ouverture de la foire d‘art documenta 14, à Athènes</p>
+
+									<p class="text-center" style="font-style: italic; padding: 5%;">
+
+										<span style= "color:#930025">Question 7:</span><br>
+										Vrai ou faux? Voici pourquoi:<br><br>
+
+										<i class="fa fa-quote-left fa-lg fa-pull-left " aria-hidden="true" style="font-size: 22px !important; font-style: italic; color:#6E6E6E;"></i> Au total, avec 51 artistes, l’art des Etats-Unis occupait environ un tiers de l’ensemble de l’édition tenue en 1968, ce qui valut à la documenta 4 son surnom d’«Americana». Grande année des contestations étudiantes et des grandes manifestations contre la guerre du Vietnam, cela déclencha de violentes réactions, même si les événements de Kassel restèrent anodins comparés à ceux qui eurent lieu à l’occasion de la Biennale de Venise.
+										<br><br>
+										<i class="fa fa-arrow-circle-o-right" aria-hidden="true" style="font-size: 22px !important; color:#6E6E6E;"></i> <span style= "color:#930025">VRAI.</span> Des étudiants troublèrent les discours d’inauguration, sur le Friedrichsplatz, et une conférence de presse fut transformée avec succès en happening par un groupe d’artistes.
+
+									</p>
+								</div>
+							</div>
+						</div> <!-- end back panel -->
+					</div> <!-- end card -->
+				</div> <!-- end card-container -->
+			</div>
+<!-------------------------------------------				-->
+
+				<div class="col-md-6 col-xs-12">
+				<div class="card-container manual-flip">
+					<div class="card">
+						<div class="front">
+							<div class="card-content">
+								<div class="main">
+									<h3 class="name">8 avril</h3>
+									<p class="profession">Ouverture de la foire d‘art documenta 14, à Athènes</p>
+
+									<p class="text-center" style="font-style: italic; padding: 5%;">
+
+										<span style= "color:#930025">Question 8:</span><br>
+										Vrai ou faux? Voici pourquoi:<br><br>
+
+										<i class="fa fa-quote-left fa-lg fa-pull-left " aria-hidden="true" style="font-size: 22px !important; font-style: italic; color:#6E6E6E;"></i> Le choix d’Athènes comme partenaire de Kassel en 2017 est dû au fait que la Grèce représente un des modèles de culture européenne et de la civilisation occidentale moderne.<br><br>
+
+										<i class="fa fa-arrow-circle-o-right " aria-hidden="true" style="font-size: 22px !important; color:#6E6E6E;"></i> <span style= "color:#930025">FAUX.</span>  Il est dû aux récentes évolutions politiques et sociales en Europe. La «tension palpable» entre le Nord et le Sud générée par la crise économique et financière est aussi un thème pour l’art.
+									</p>
+								</div>
+								<div class="footer">
+									<div class="rating">
+									</div>
+								</div>
+							</div>
+						</div> <!-- end front panel -->
+						<div class="back">
+							<div class="card-content">
+								<div class="main">
+									<h3 class="name">8 avril</h3>
+									<p class="profession">Ouverture de la foire d‘art documenta 14, à Athènes</p>
+
+									<p class="text-center" style="font-style: italic; padding: 5%;">
+
+										<span style= "color:#930025">Question 8:</span><br>
+										Vrai ou faux? Voici pourquoi:<br><br>
+
+										<i class="fa fa-quote-left fa-lg fa-pull-left " aria-hidden="true" style="font-size: 22px !important; font-style: italic; color:#6E6E6E;"></i> La tradition idéologique de la documenta date de 1972, lorsque Joseph Beuys y installa son Bureau pour la démocratie directe. Celui-ci est demeuré légendaire et a fixé l’esprit de la manifestation.
+										<br><br>
+										<i class="fa fa-arrow-circle-o-right " aria-hidden="true" style="font-size: 22px !important; color:#6E6E6E;"></i> <span style= "color:#930025">VRAI.</span> Les rôles sont répartis ainsi: aux Foires de Bâle et de Miami, à la Biennale de Venise aussi, les artistes du marché international; et à Kassel, l’autre Internationale, celle des révoltes et des luttes. 
+
+									</p>
+								</div>
+							</div>
+						</div> <!-- end back panel -->
+					</div> <!-- end card -->
+				</div> <!-- end card-container -->
+			</div>
+
+<!------------------------------------		-->
+		
+				<div class="col-md-6 col-xs-12">	
+			<div class="card-container manual-flip">
+				<div class="card">
+					<div class="front">
+						<div class="card-content">
+							<div class="main">
+								<h3 class="name">7 mai</h3>
+								<p class="profession">Deuxième tour de l’élection présidentielle française</p>
+
+								<p class="text-center" style="font-style: italic; padding: 5%;">
+
+									<span style= "color:#930025">Question 9:</span><br>
+									Vrai ou faux? Voici pourquoi:<br><br>
+
+									<i class="fa fa-quote-left fa-lg fa-pull-left " aria-hidden="true" style="font-size: 22px !important; font-style: italic; color:#6E6E6E;"></i> C’est la première fois de l’histoire de la Ve République qu’un président en exercice ne se représente pas pour un deuxième mandat.<br><br>
+
+									<i class="fa fa-arrow-circle-o-right" aria-hidden="true" style="font-size: 22px !important; color:#6E6E6E;"></i> <span style= "color:#930025">VRAI.</span> Toutefois, Georges Pompidou a exercé la fonction de président de la République du 20 juin 1969, jusqu’à sa mort, le 2 avril 1974.
+
+								</p>
+							</div>
+							<div class="footer">
+								<div class="rating">
+								</div>
+							</div>
+						</div>
+					</div> <!-- end front panel -->
+					<div class="back">
+						<div class="card-content">
+							<div class="main">
+								<h3 class="name">7 mai</h3>
+								<p class="profession">Deuxième tour de l’élection présidentielle française</p>
+
+								<p class="text-center" style="font-style: italic; padding: 5%;">
+
+									<span style= "color:#930025">Question 9:</span><br>
+									Vrai ou faux? Voici pourquoi:<br><br>
+
+									<i class="fa fa-quote-left fa-lg fa-pull-left " aria-hidden="true" style="font-size: 22px !important; font-style: italic; color:#6E6E6E;"></i> La plupart des observateurs prévoient une finale entre Marine Le Pen et François Fillon. Ce sera la septième fois qu’un membre de la famille Le Pen se présente à l’élection présidentielle française.
+									<br><br>
+									<i class="fa fa-arrow-circle-o-right" aria-hidden="true" style="font-size: 22px !important; color:#6E6E6E;"></i> <span style= "color:#930025">VRAI.</span> Le père, Jean-Marie, s’est présenté cinq fois, en 1974 (0,75% des voix), 1988 (14,4%), 1995 (15%), 2002 (17,8% au 2e tour) et 2007 (10,4%). Sa fille a pris le relais dès 2007 (10,4%).
+
+								</p>
+							</div>
+						</div>
+					</div> <!-- end back panel -->
+				</div> <!-- end card -->
+			</div> <!-- end card-container -->
+		</div>
+<!-------------------------------------------				-->
+		
+				<div class="col-md-6 col-xs-12">	
+				<div class="card-container manual-flip">
+					<div class="card">
+						<div class="front">
+							<div class="card-content">
+								<div class="main">
+									<h3 class="name">7 mai</h3>
+									<p class="profession">Deuxième tour de l’élection présidentielle française</p>
+
+									<p class="text-center" style="font-style: italic; padding: 5%;">
+
+										<span style= "color:#930025">Question 10:</span><br>
+										Vrai ou faux? Voici pourquoi:<br><br>
+
+										<i class="fa fa-quote-left fa-lg fa-pull-left " aria-hidden="true" style="font-size: 22px !important; font-style: italic; color:#6E6E6E;"></i> Le premier président français fut Louis-Napoléon Bonaparte, qui fut aussi le plus jeune (40 ans).<br><br>
+
+										<i class="fa fa-arrow-circle-o-right" aria-hidden="true" style="font-size: 22px !important; color:#6E6E6E;"></i> <span style= "color:#930025">VRAI.</span> Il fut élu en 1848 au suffrage universel masculin, avant d’être proclamé empereur des Français en 1852 sous le nom de Napoléon III.
+
+									</p>
+								</div>
+								<div class="footer">
+									<div class="rating">
+									</div>
+								</div>
+							</div>
+						</div>
+
+
+						<div class="back">
+							<div class="card-content">
+								<div class="main">
+									<h3 class="name">7 mai</h3>
+									<p class="profession">Deuxième tour de l’élection présidentielle française</p>
+
+									<p class="text-center" style="font-style: italic; padding: 5%;">
+
+										<span style= "color:#930025">Question 10:</span><br>
+										Vrai ou faux? Voici pourquoi:<br><br>
+
+										<i class="fa fa-quote-left fa-lg fa-pull-left " aria-hidden="true" style="font-size: 22px !important; font-style: italic; color:#6E6E6E;"></i> François Fillon, que beaucoup voient comme le prochain président, a étudié au collège privé de Saint-Michel-des-Perrais, à Parigné-le-Pôlin, d’où il fut exclu provisoirement pour avoir insulté un professeur d’anglais.
+										<br><br>
+										<i class="fa fa-arrow-circle-o-right" aria-hidden="true" style="font-size: 22px !important; color:#6E6E6E;"></i> <span style= "color:#930025">FAUX.</span> C’était pour avoir jeté une ampoule lacrymogène en plein cours. Mais c’est du lycée Notre-Dame de Sainte-Croix, au Mans, qu’il fut exclu pendant quelques jours pour avoir demandé la démission d’un professeur d’anglais, qu’il jugeait incompétent.
+
+									</p>
+								</div>
+							</div>
+						</div> <!-- end back panel -->
+					</div> <!-- end card -->
+				</div> <!-- end card-container -->
+			</div>
+
+<!-------------------------------------------				-->
+				
+				<div class="col-md-6 col-xs-12">	
+					<div class="card-container manual-flip">
+						<div class="card">
+							<div class="front">
+								<div class="card-content">
+									<div class="main">
+										<h3 class="name">18 juin</h3>
+										<p class="profession">Jura ou Berne: Moutier décide de son avenir cantonal</p>
+
+										<p class="text-center" style="font-style: italic; padding: 5%;">
+
+											<span style= "color:#930025">Question 11:</span><br>
+											Vrai ou faux? Voici pourquoi:<br><br>
+
+											<i class="fa fa-quote-left fa-lg fa-pull-left " aria-hidden="true" style="font-size: 22px !important; font-style: italic; color:#6E6E6E;"></i> Un important foyer de séparatisme subsiste dans le Jura bernois, notamment en ville de Moutier, dont la majorité des autorités est séparatiste depuis le plébiscite de 1977. En 1992, lors d’un vote consultatif, les citoyens de Moutier ont rejeté de justesse le rattachement de leur commune au canton du Jura.<br><br>
+
+											<i class="fa fa-arrow-circle-o-right" aria-hidden="true" style="font-size: 22px !important; color:#6E6E6E;"></i> <span style= "color:#930025">FAUX.</span> C’est depuis 1982 que les autorités sont majoritairement séparatistes. Et c’est en 1998 qu’eut lieu ce fameux vote consultatif.
+
+										</p>
+									</div>
+									<div class="footer">
+										<div class="rating">
+										</div>
+									</div>
+								</div>
+							</div>
+
+
+							<div class="back">
+								<div class="card-content">
+									<div class="main">
+										<h3 class="name">18 juin</h3>
+										<p class="profession">Jura ou Berne: Moutier décide de son avenir cantonal</p>
+
+										<p class="text-center" style="font-style: italic; padding: 5%;">
+
+											<span style= "color:#930025">Question 11:</span><br>
+											Vrai ou faux? Voici pourquoi:<br><br>
+
+											<i class="fa fa-quote-left fa-lg fa-pull-left " aria-hidden="true" style="font-size: 22px !important; font-style: italic; color:#6E6E6E;"></i> Si les citoyens de la ville de Moutier disent «oui» au rattachement à la République et canton du Jura, il y aura donc à terme une enclave jurassienne dans le canton de Berne.
+											<br><br>
+											<i class="fa fa-arrow-circle-o-right" aria-hidden="true" style="font-size: 22px !important; color:#6E6E6E;"></i> <span style= "color:#930025">FAUX.</span> Moutier est géographiquement contiguë avec les communes jurassiennes de Châtillon et Soulce (Haute-Sorne). Il s’agira donc d’un déplacement de frontière.
+
+										</p>
+									</div>
+								</div>
+							</div> <!-- end back panel -->
+						</div> <!-- end card -->
+					</div> <!-- end card-container -->
+				</div>
+	
+<!-------------------------------------------				-->			
+				
+				<div class="col-md-6 col-xs-12">	
+					<div class="card-container manual-flip">
+						<div class="card">
+							<div class="front">
+								<div class="card-content">
+									<div class="main">
+										<h3 class="name">18 juin</h3>
+										<p class="profession">Jura ou Berne: Moutier décide de son avenir cantonal</p>
+
+										<p class="text-center" style="font-style: italic; padding: 5%;">
+
+											<span style= "color:#930025">Question 12:</span><br>
+											Vrai ou faux? Voici pourquoi:<br><br>
+
+											<i class="fa fa-quote-left fa-lg fa-pull-left " aria-hidden="true" style="font-size: 22px !important; font-style: italic; color:#6E6E6E;"></i> Les gorges de Moutier figurent en bonne place dans le guide Michelin, mais avant lui, le poète allemand Goethe, qui a séjourné chez les Moutiérois, les avait découvertes, leur consacrant un texte fameux, avec toute la puissance et l’exaltation dont la ville est  encore fière aujourd’hui.<br><br>
+
+											<i class="fa fa-arrow-circle-o-right" aria-hidden="true" style="font-size: 22px !important; color:#6E6E6E;"></i> <span style= "color:#930025">FAUX.</span> Car les habitants de Moutier s’appellent en réalité les Prévôtois. Le reste est vrai.
+
+										</p>
+									</div>
+									<div class="footer">
+										<div class="rating">
+										</div>
+									</div>
+								</div>
+							</div>
+
+
+							<div class="back">
+								<div class="card-content">
+									<div class="main">
+										<h3 class="name">18 juin</h3>
+										<p class="profession">Jura ou Berne: Moutier décide de son avenir cantonal</p>
+
+										<p class="text-center" style="font-style: italic; padding: 5%;">
+
+											<span style= "color:#930025">Question 12:</span><br>
+											Vrai ou faux? Voici pourquoi:<br><br>
+
+											<i class="fa fa-quote-left fa-lg fa-pull-left " aria-hidden="true" style="font-size: 22px !important; font-style: italic; color:#6E6E6E;"></i> Moutier est une agglomération urbaine devenue assez importante autour de laquelle gravitent les communes de la Prévôté, mais c’est également le chef-lieu du plus grand des trois districts du Jura méridional.
+											<br><br>
+											<i class="fa fa-arrow-circle-o-right" aria-hidden="true" style="font-size: 22px !important; color:#6E6E6E;"></i> <span style= "color:#930025">VRAI.</span> Cette subdivision politique du canton de Berne comprend toute la vallée de Tavannes.
+
+										</p>
+									</div>
+								</div>
+							</div> <!-- end back panel -->
+						</div> <!-- end card -->
+					</div> <!-- end card-container -->
+				</div>	
+				
+<!-------------------------------------------				-->	
+				
+				<div class="col-md-6 col-xs-12">	
+					<div class="card-container manual-flip">
+						<div class="card">
+							<div class="front">
+								<div class="card-content">
+									<div class="main">
+										<h3 class="name">18 juillet</h3>
+										<p class="profession">Début du 42e Paléo Festival de Nyon</p>
+
+										<p class="text-center" style="font-style: italic; padding: 5%;">
+
+											<span style= "color:#930025">Question 13:</span><br>
+											Vrai ou faux? Voici pourquoi:<br><br>
+
+											<i class="fa fa-quote-left fa-lg fa-pull-left " aria-hidden="true" style="font-size: 22px !important; font-style: italic; color:#6E6E6E;"></i> Le nom du festival a été choisi pour souligner la passion bien connue que son actuel président, Daniel Rossellat, voue au paléolithique, la première période de la préhistoire.<br><br>
+
+											<i class="fa fa-arrow-circle-o-right" aria-hidden="true" style="font-size: 22px !important; color:#6E6E6E;"></i> <span style= "color:#930025">FAUX.</span> Le First Folk Festival a eu lieu en 1976 à la salle communale de Nyon. L’année suivante, il se tient à Colovray. En 1983, il est renommé Paléo Folk Festival, en prévision d’un déménagement et du vieillissement du concept folk. En 1986, il devient le Paléo Festival.
+
+										</p>
+									</div>
+									<div class="footer">
+										<div class="rating">
+										</div>
+									</div>
+								</div>
+							</div>
+
+
+							<div class="back">
+								<div class="card-content">
+									<div class="main">
+										<h3 class="name">18 juillet</h3>
+										<p class="profession">Début du 42e Paléo Festival de Nyon</p>
+
+										<p class="text-center" style="font-style: italic; padding: 5%;">
+
+											<span style= "color:#930025">Question 13:</span><br>
+											Vrai ou faux? Voici pourquoi:<br><br>
+
+											<i class="fa fa-quote-left fa-lg fa-pull-left " aria-hidden="true" style="font-size: 22px !important; font-style: italic; color:#6E6E6E;"></i> Le Paléo Festival Nyon a dévoilé le 30 novembre dernier l’affiche de sa 42e édition. Un univers visuel résolument contemporain qui place la scène et ses lumières au cœur de l’affiche.
+											<br><br>
+											<i class="fa fa-arrow-circle-o-right" aria-hidden="true" style="font-size: 22px !important; color:#6E6E6E;"></i> <span style= "color:#930025">VRAI.</span> Les lauréates du concours ont travaillé sur les sources lumineuses du festival et les ont transposées vectoriellement en lignes, triangles ou cercles aux contours nets et d’autres éléments avec des effets de flou.
+
+										</p>
+									</div>
+								</div>
+							</div> <!-- end back panel -->
+						</div> <!-- end card -->
+					</div> <!-- end card-container -->
+				</div>	
+
+<!-------------------------------------------				-->	
+				
+				<div class="col-md-6 col-xs-12">	
+					<div class="card-container manual-flip">
+						<div class="card">
+							<div class="front">
+								<div class="card-content">
+									<div class="main">
+										<h3 class="name">18 juillet</h3>
+										<p class="profession">Début du 42e Paléo Festival de Nyon</p>
+
+										<p class="text-center" style="font-style: italic; padding: 5%;">
+
+											<span style= "color:#930025">Question 14:</span><br>
+											Vrai ou faux? Voici pourquoi:<br><br>
+
+											<i class="fa fa-quote-left fa-lg fa-pull-left " aria-hidden="true" style="font-size: 22px !important; font-style: italic; color:#6E6E6E;"></i> Six jours, six nuits, 230 000 spectateurs attendus, plus de 250 concerts et spectacles répartis sur six scènes et plus de 100 stands sur le terrain: tels sont les chiffres principaux du Paléo Festival.<br><br>
+
+											<i class="fa fa-arrow-circle-o-right" aria-hidden="true" style="font-size: 22px !important; color:#6E6E6E;"></i> <span style= "color:#930025">FAUX.</span> On compte aujourd’hui plus de 220 stands sur le terrain.
+
+										</p>
+									</div>
+									<div class="footer">
+										<div class="rating">
+										</div>
+									</div>
+								</div>
+							</div>
+
+
+							<div class="back">
+								<div class="card-content">
+									<div class="main">
+										<h3 class="name">18 juillet</h3>
+										<p class="profession">Début du 42e Paléo Festival de Nyon</p>
+
+										<p class="text-center" style="font-style: italic; padding: 5%;">
+
+											<span style= "color:#930025">Question 14:</span><br>
+											Vrai ou faux? Voici pourquoi:<br><br>
+
+											<i class="fa fa-quote-left fa-lg fa-pull-left " aria-hidden="true" style="font-size: 22px !important; font-style: italic; color:#6E6E6E;"></i> C’est un Michel Polnareff badin et décontracté qui a clos le 41e Paléo Festival en 2016. Il s’est mis les spectateurs dans la poche dès sa première chanson, «La poupée qui fait non».
+											<br><br>
+											<i class="fa fa-arrow-circle-o-right" aria-hidden="true" style="font-size: 22px !important; color:#6E6E6E;"></i> <span style= "color:#930025">FAUX.</span> Il l’avait transformée en «Poupée qui fait Nyon».
+
+										</p>
+									</div>
+								</div>
+							</div> <!-- end back panel -->
+						</div> <!-- end card -->
+					</div> <!-- end card-container -->
+				</div>	
+
+<!-------------------------------------------				-->	
+				
+				<div class="col-md-6 col-xs-12">	
+					<div class="card-container manual-flip">
+						<div class="card">
+							<div class="front">
+								<div class="card-content">
+									<div class="main">
+										<h3 class="name">2 août</h3>
+										<p class="profession">Début du 70e Festival du film de Locarno</p>
+
+										<p class="text-center" style="font-style: italic; padding: 5%;">
+
+											<span style= "color:#930025">Question 15:</span><br>
+											Vrai ou faux? Voici pourquoi:<br><br>
+
+											<i class="fa fa-quote-left fa-lg fa-pull-left " aria-hidden="true" style="font-size: 22px !important; font-style: italic; color:#6E6E6E;"></i> Au début de son existence, la quinzaine locarnaise se disputait avec Cannes le statut de deuxième plus vieux festival du monde.<br><br>
+
+											<i class="fa fa-arrow-circle-o-right" aria-hidden="true" style="font-size: 22px !important; color:#6E6E6E;"></i> <span style= "color:#930025">VRAI.</span> La première place échoit à la Mostra de Venise, créée en 1932 par Mussolini. Le Ministère français de l’éducation nationale mit Cannes sur pied en septembre 1946 comme une renaissance après l’impérialisme du Duce, soit juste après le Festival de Locarno, inauguré le 23 septembre 1946.
+
+										</p>
+									</div>
+									<div class="footer">
+										<div class="rating">
+										</div>
+									</div>
+								</div>
+							</div>
+
+
+							<div class="back">
+								<div class="card-content">
+									<div class="main">
+										<h3 class="name">2 août</h3>
+										<p class="profession">Début du 70e Festival du film de Locarno</p>
+
+										<p class="text-center" style="font-style: italic; padding: 5%;">
+
+											<span style= "color:#930025">Question 15:</span><br>
+											Vrai ou faux? Voici pourquoi:<br><br>
+
+											<i class="fa fa-quote-left fa-lg fa-pull-left " aria-hidden="true" style="font-size: 22px !important; font-style: italic; color:#6E6E6E;"></i> En 1970, Freddy Buache présente au Festival de Locarno La Momie, chef-d’œuvre de l’Egyptien Shadi Abdessalam. Ce choix d’un film arabe, et non européen, suscite une grosse polémique.
+											<br><br>
+											<i class="fa fa-arrow-circle-o-right" aria-hidden="true" style="font-size: 22px !important; color:#6E6E6E;"></i> <span style= "color:#930025">VRAI.</span> Mais c’est plutôt le chef de la section cinéma du Département fédéral de l’intérieur qui avait fait scandale, en jetant à Buache: «Mon pauvre: quand on se permet de choisir une telle médiocrité pour l’inauguration d’un festival international, on ne peut prétendre en être le directeur.» L’ex-directeur de la Cinémathèque suisse avait claqué la porte avec son collègue, Sandro Bianconi.
+
+										</p>
+									</div>
+								</div>
+							</div> <!-- end back panel -->
+						</div> <!-- end card -->
+					</div> <!-- end card-container -->
+				</div>	
+
+<!-------------------------------------------				-->	
+				
+				<div class="col-md-6 col-xs-12">	
+					<div class="card-container manual-flip">
+						<div class="card">
+							<div class="front">
+								<div class="card-content">
+									<div class="main">
+										<h3 class="name">2 août</h3>
+										<p class="profession">Début du 70e Festival du film de Locarno</p>
+
+										<p class="text-center" style="font-style: italic; padding: 5%;">
+
+											<span style= "color:#930025">Question 16:</span><br>
+											Vrai ou faux? Voici pourquoi:<br><br>
+
+											<i class="fa fa-quote-left fa-lg fa-pull-left " aria-hidden="true" style="font-size: 22px !important; font-style: italic; color:#6E6E6E;"></i> Pour protester contre l’interdiction, en août 1956, par la Cour constitutionnelle de Karlsruhe, du Parti communiste en Allemagne de l’Ouest, le Festival n’a pas eu lieu cette année-là.<br><br>
+
+											<i class="fa fa-arrow-circle-o-right" aria-hidden="true" style="font-size: 22px !important; color:#6E6E6E;"></i> <span style= "color:#930025">FAUX.</span> En août 1995, Jean-Luc Godard était à Locarno pour participer à une table ronde autour de on œuvre. Un photographe s’était lors approché de lui et avait déplacé une bouteille d’eau qui se trouvait dans le champ.
+
+										</p>
+									</div>
+									<div class="footer">
+										<div class="rating">
+										</div>
+									</div>
+								</div>
+							</div>
+
+
+							<div class="back">
+								<div class="card-content">
+									<div class="main">
+										<h3 class="name">2 août</h3>
+										<p class="profession">Début du 70e Festival du film de Locarno</p>
+
+										<p class="text-center" style="font-style: italic; padding: 5%;">
+
+											<span style= "color:#930025">Question 16:</span><br>
+											Vrai ou faux? Voici pourquoi:<br><br>
+
+											<i class="fa fa-quote-left fa-lg fa-pull-left " aria-hidden="true" style="font-size: 22px !important; font-style: italic; color:#6E6E6E;"></i> En 1970, Freddy Buache présente au Festival de Locarno La Momie, chef-d’œuvre de l’Egyptien Shadi Abdessalam. Ce choix d’un film arabe, et non européen, suscite une grosse polémique.
+											<br><br>
+											<i class="fa fa-arrow-circle-o-right" aria-hidden="true" style="font-size: 22px !important; color:#6E6E6E;"></i> <span style= "color:#930025">VRAI.</span> Sauf qu’au moment de la photo, Godard avait déjà remis la bouteille en place et même essayé de placer son verre debout sur le bouchon pour empêcher le travail du gêneur.
+
+										</p>
+									</div>
+								</div>
+							</div> <!-- end back panel -->
+						</div> <!-- end card -->
+					</div> <!-- end card-container -->
+				</div>	
+
+<!-------------------------------------------				-->	
+				
+				<div class="col-md-6 col-xs-12">	
+					<div class="card-container manual-flip">
+						<div class="card">
+							<div class="front">
+								<div class="card-content">
+									<div class="main">
+										<h3 class="name">17 ou 24 septembre</h3>
+										<p class="profession">Élections fédérales allemandes</p>
+
+										<p class="text-center" style="font-style: italic; padding: 5%;">
+
+											<span style= "color:#930025">Question 17:</span><br>
+											Vrai ou faux? Voici pourquoi:<br><br>
+
+											<i class="fa fa-quote-left fa-lg fa-pull-left " aria-hidden="true" style="font-size: 22px !important; font-style: italic; color:#6E6E6E;"></i> Si Angela Merkel est élue pour un 4e mandat de chancelière et qu’elle l’exerce jusqu’au bout, elle aura duré plus longtemps à ce poste que Konrad Adenauer, lequel a passé 14 ans et un mois à la chancellerie.<br><br>
+
+											<i class="fa fa-arrow-circle-o-right" aria-hidden="true" style="font-size: 22px !important; color:#6E6E6E;"></i> <span style= "color:#930025">VRAI.</span> Mais en théorie (cela dépendra de la tournure des événements en 2021), ce sera encore Helmut Kohl qui aura exercé le plus long mandat gouvernemental depuis Bismarck.
+
+										</p>
+									</div>
+									<div class="footer">
+										<div class="rating">
+										</div>
+									</div>
+								</div>
+							</div>
+
+
+							<div class="back">
+								<div class="card-content">
+									<div class="main">
+										<h3 class="name">17 ou 24 septembre</h3>
+										<p class="profession">Élections fédérales allemandes</p>
+
+										<p class="text-center" style="font-style: italic; padding: 5%;">
+
+											<span style= "color:#930025">Question 17:</span><br>
+											Vrai ou faux? Voici pourquoi:<br><br>
+
+											<i class="fa fa-quote-left fa-lg fa-pull-left " aria-hidden="true" style="font-size: 22px !important; font-style: italic; color:#6E6E6E;"></i> Angela Merkel est la première femme et première personnalité née en Allemagne de l’Est à avoir accédé à la Chancellerie allemande.
+											<br><br>
+											<i class="fa fa-arrow-circle-o-right" aria-hidden="true" style="font-size: 22px !important; color:#6E6E6E;"></i> <span style= "color:#930025">FAUX.</span> Elle est née en juillet 1954 à Hambourg, mais quelques mois après, sa famille a quitté cette ville pour aller s’établir en RDA.
+										</p>
+									</div>
+								</div>
+							</div> <!-- end back panel -->
+						</div> <!-- end card -->
+					</div> <!-- end card-container -->
+				</div>	
+
+<!-------------------------------------------				-->	
+				
+				<div class="col-md-6 col-xs-12">	
+					<div class="card-container manual-flip">
+						<div class="card">
+							<div class="front">
+								<div class="card-content">
+									<div class="main">
+										<h3 class="name">17 ou 24 septembre</h3>
+										<p class="profession">Élections fédérales allemandes</p>
+
+										<p class="text-center" style="font-style: italic; padding: 5%;">
+
+											<span style= "color:#930025">Question 18:</span><br>
+											Vrai ou faux? Voici pourquoi:<br><br>
+
+											<i class="fa fa-quote-left fa-lg fa-pull-left " aria-hidden="true" style="font-size: 22px !important; font-style: italic; color:#6E6E6E;"></i> Angela Merkel a été désignée comme femme la plus puissante du monde par le magazine «Forbes» à 11 reprises, de 2006 à 2016.<br><br>
+
+											<i class="fa fa-arrow-circle-o-right" aria-hidden="true" style="font-size: 22px !important; color:#6E6E6E;"></i> <span style= "color:#930025">FAUX.</span> Mais durant cette période, elle n’a perdu qu’une seule fois le «titre», en 2009 où elle a obtenu le 4e place, derrière Michelle Obama, Sonia Gandhi et Oprah Winfrey.
+
+										</p>
+									</div>
+									<div class="footer">
+										<div class="rating">
+										</div>
+									</div>
+								</div>
+							</div>
+
+
+							<div class="back">
+								<div class="card-content">
+									<div class="main">
+										<h3 class="name">17 ou 24 septembre</h3>
+										<p class="profession">Élections fédérales allemandes</p>
+
+										<p class="text-center" style="font-style: italic; padding: 5%;">
+
+											<span style= "color:#930025">Question 18:</span><br>
+											Vrai ou faux? Voici pourquoi:<br><br>
+
+											<i class="fa fa-quote-left fa-lg fa-pull-left " aria-hidden="true" style="font-size: 22px !important; font-style: italic; color:#6E6E6E;"></i> A l’ex-Académie des sciences de la RDA, où la chancelière a fait ses études, un physicien de renommée internationale, Joachim Sauer, occupe aujourd’hui la chaire de chimie physique et théorique. C’est le mari d’Angela Merkel.
+											<br><br>
+											<i class="fa fa-arrow-circle-o-right" aria-hidden="true" style="font-size: 22px !important; color:#6E6E6E;"></i> <span style= "color:#930025">VRAI.</span> «Monsieur Merkel», comme l’avait interpellé Nicolas Sarkozy, ignorant que la chancelière avait conservé le patronyme de son premier mari. Ce dernier le traîne comme un boulet: «Nous sommes divorcés depuis plus de trente ans. J’aimerais une chose, c’est que vous me fichiez la paix, maintenant», dit-il.
+
+										</p>
+									</div>
+								</div>
+							</div> <!-- end back panel -->
+						</div> <!-- end card -->
+					</div> <!-- end card-container -->
+				</div>	
+
+<!-------------------------------------------				-->	
+				
+				<div class="col-md-6 col-xs-12">	
+					<div class="card-container manual-flip">
+						<div class="card">
+							<div class="front">
+								<div class="card-content">
+									<div class="main">
+										<h3 class="name">31 octobre</h3>
+										<p class="profession">500e anniversaire de la Réforme protestante</p>
+
+										<p class="text-center" style="font-style: italic; padding: 5%;">
+
+											<span style= "color:#930025">Question 19:</span><br>
+											Vrai ou faux? Voici pourquoi:<br><br>
+
+											<i class="fa fa-quote-left fa-lg fa-pull-left " aria-hidden="true" style="font-size: 22px !important; font-style: italic; color:#6E6E6E;"></i> Le 31 octobre 1517, Martin Luther King aurait placardé sur les portes de l’église de la Toussaint de Wittemberg ses 95 thèses condamnant violemment le commerce des indulgences pratiqué par l’Eglise catholique. Cette date est le déclencheur symbolique de la Réforme protestante en Europe du Nord-Ouest.<br><br>
+
+											<i class="fa fa-arrow-circle-o-right" aria-hidden="true" style="font-size: 22px !important; color:#6E6E6E;"></i> <span style= "color:#930025">FAUX.</span> Il s’agit du théologien allemand Martin Luther et non du pasteur baptiste afro-américain et militant non violent pour les droits civiques des Noirs aux Etats-Unis Martin Luther King Jr. assassiné en 1968 à Memphis.
+
+										</p>
+									</div>
+									<div class="footer">
+										<div class="rating">
+										</div>
+									</div>
+								</div>
+							</div>
+
+
+							<div class="back">
+								<div class="card-content">
+									<div class="main">
+										<h3 class="name">31 octobre</h3>
+										<p class="profession">500e anniversaire de la Réforme protestante</p>
+
+										<p class="text-center" style="font-style: italic; padding: 5%;">
+
+											<span style= "color:#930025">Question 19:</span><br>
+											Vrai ou faux? Voici pourquoi:<br><br>
+
+											<i class="fa fa-quote-left fa-lg fa-pull-left " aria-hidden="true" style="font-size: 22px !important; font-style: italic; color:#6E6E6E;"></i> 
+											Zwingli fut le principal artisan de la Réforme en Suisse. A Zurich, ses idées furent reçues favorablement par les entrepreneurs, les hommes d’affaires et les corporations. En 1523, le conseil de la ville décida de concrétiser ses projets de réforme et de se convertir au protestantisme.
+											<br><br>
+											<i class="fa fa-arrow-circle-o-right" aria-hidden="true" style="font-size: 22px !important; color:#6E6E6E;"></i> <span style= "color:#930025">VRAI.</span> L’Eglise fut sécularisée et les prêtres dispensés du célibat. L’Etat prit en charge l’administration des biens de l’Eglise et le salaire des prêtres.
+
+										</p>
+									</div>
+								</div>
+							</div> <!-- end back panel -->
+						</div> <!-- end card -->
+					</div> <!-- end card-container -->
+				</div>	
+
+<!-------------------------------------------				-->	
+				
+				<div class="col-md-6 col-xs-12">	
+					<div class="card-container manual-flip">
+						<div class="card">
+							<div class="front">
+								<div class="card-content">
+									<div class="main">
+										<h3 class="name">31 octobre</h3>
+										<p class="profession">500e anniversaire de la Réforme protestante</p>
+
+										<p class="text-center" style="font-style: italic; padding: 5%;">
+
+											<span style= "color:#930025">Question 20:</span><br>
+											Vrai ou faux? Voici pourquoi:<br><br>
+
+											<i class="fa fa-quote-left fa-lg fa-pull-left " aria-hidden="true" style="font-size: 22px !important; font-style: italic; color:#6E6E6E;"></i> Jean Calvin rompit avec l’Eglise catholique-romaine vers 1530. Plus tard, à Genève, il introduisit une nouvelle liturgie et des idées politiques novatrices malgré l’opposition de plusieurs puissantes familles de la ville qui tentèrent de s’opposer à son autorité, en particulier au moment du procès de Michel Servet.<br><br>
+
+											<i class="fa fa-arrow-circle-o-right" aria-hidden="true" style="font-size: 22px !important; color:#6E6E6E;"></i> <span style= "color:#930025">VRAI.</span> De plus, l’arrivée de réfugiés favorables à Calvin lui permirent d’évincer ses opposants. Il passa les dernières années de sa vie à promouvoir la Réforme à Genève et dans toute l’Europe.
+
+										</p>
+									</div>
+									<div class="footer">
+										<div class="rating">
+										</div>
+									</div>
+								</div>
+							</div>
+
+
+							<div class="back">
+								<div class="card-content">
+									<div class="main">
+										<h3 class="name">31 octobre</h3>
+										<p class="profession">500e anniversaire de la Réforme protestante</p>
+
+										<p class="text-center" style="font-style: italic; padding: 5%;">
+
+											<span style= "color:#930025">Question 20:</span><br>
+											Vrai ou faux? Voici pourquoi:<br><br>
+
+											<i class="fa fa-quote-left fa-lg fa-pull-left " aria-hidden="true" style="font-size: 22px !important; font-style: italic; color:#6E6E6E;"></i> 
+											Le Mur des réformateurs se situe à Genève. Il a été construit dès 1909 pour le 400e anniversaire de la naissance de Jean Calvin, avec du matériel issu de la carrière de calcaire et de silice de Meillerie, sur la rive sud du Léman.
+											<br><br>
+											<i class="fa fa-arrow-circle-o-right" aria-hidden="true" style="font-size: 22px !important; color:#6E6E6E;"></i> <span style= "color:#930025">FAUX.</span> Le Mur  a été réalisé en pierre de Pouillenay, en Côte-d’Or française.
+
+										</p>
+									</div>
+								</div>
+							</div> <!-- end back panel -->
+						</div> <!-- end card -->
+					</div> <!-- end card-container -->
+				</div>	
+
+<!-------------------------------------------				-->	
+				
+				<div class="col-md-6 col-xs-12">	
+					<div class="card-container manual-flip">
+						<div class="card">
+							<div class="front">
+								<div class="card-content">
+									<div class="main">
+										<h3 class="name">6 décembre</h3>
+										<p class="profession">Alain Berset président de la Confédération pour 2018</p>
+
+										<p class="text-center" style="font-style: italic; padding: 5%;">
+
+											<span style= "color:#930025">Question 21:</span><br>
+											Vrai ou faux? Voici pourquoi:<br><br>
+
+											<i class="fa fa-quote-left fa-lg fa-pull-left " aria-hidden="true" style="font-size: 22px !important; font-style: italic; color:#6E6E6E;"></i> A 46 ans, le socialiste fribourgeois sera le plus jeune président que le Conseil fédéral ait jamais connu.<br><br>
+
+											<i class="fa fa-arrow-circle-o-right" aria-hidden="true" style="font-size: 22px !important; color:#6E6E6E;"></i> <span style= "color:#930025">FAUX.</span> Il n’arrive qu’au 17e rang. Le plus jeune est Jakob Stämpfli, conseiller fédéral de 1855 à 1863 qui, en 1856, avait 36 ans.
+
+										</p>
+									</div>
+									<div class="footer">
+										<div class="rating">
+										</div>
+									</div>
+								</div>
+							</div>
+
+
+							<div class="back">
+								<div class="card-content">
+									<div class="main">
+										<h3 class="name">6 décembre</h3>
+										<p class="profession">Alain Berset président de la Confédération pour 2018</p>
+
+										<p class="text-center" style="font-style: italic; padding: 5%;">
+
+											<span style= "color:#930025">Question 21:</span><br>
+											Vrai ou faux? Voici pourquoi:<br><br>
+
+											<i class="fa fa-quote-left fa-lg fa-pull-left " aria-hidden="true" style="font-size: 22px !important; font-style: italic; color:#6E6E6E;"></i> 
+											Le canton de Fribourg n’a plus eu de président de la Confédération depuis 2004.
+											<br><br>
+											<i class="fa fa-arrow-circle-o-right" aria-hidden="true" style="font-size: 22px !important; color:#6E6E6E;"></i> <span style= "color:#930025">VRAI.</span> Il s’agissait de Joseph Deiss, conseiller fédéral de 1999 à 2006.
+
+										</p>
+									</div>
+								</div>
+							</div> <!-- end back panel -->
+						</div> <!-- end card -->
+					</div> <!-- end card-container -->
+				</div>	
+
+<!-------------------------------------------				-->	
+				
+				<div class="col-md-6 col-xs-12">	
+					<div class="card-container manual-flip">
+						<div class="card">
+							<div class="front">
+								<div class="card-content">
+									<div class="main">
+										<h3 class="name">6 décembre</h3>
+										<p class="profession">Alain Berset président de la Confédération pour 2018</p>
+
+										<p class="text-center" style="font-style: italic; padding: 5%;">
+
+											<span style= "color:#930025">Question 22:</span><br>
+											Vrai ou faux? Voici pourquoi:<br><br>
+
+											<i class="fa fa-quote-left fa-lg fa-pull-left " aria-hidden="true" style="font-size: 22px !important; font-style: italic; color:#6E6E6E;"></i> En 2011, le nouveau conseiller fédéral Berset avait obtenu le poste convoité par la droite: le Département des affaires sociales et de la santé.<br><br>
+
+											<i class="fa fa-arrow-circle-o-right" aria-hidden="true" style="font-size: 22px !important; color:#6E6E6E;"></i> <span style= "color:#930025">FAUX.</span> Ce département était bien convoité par la gauche: Alain Berset y avait accédé en remplacement de Didier Burkhalter, qui avait passé aux Affaires étrangères.
+
+										</p>
+									</div>
+									<div class="footer">
+										<div class="rating">
+										</div>
+									</div>
+								</div>
+							</div>
+
+
+							<div class="back">
+								<div class="card-content">
+									<div class="main">
+										<h3 class="name">6 décembre</h3>
+										<p class="profession">Alain Berset président de la Confédération pour 2018</p>
+
+										<p class="text-center" style="font-style: italic; padding: 5%;">
+
+											<span style= "color:#930025">Question 22:</span><br>
+											Vrai ou faux? Voici pourquoi:<br><br>
+
+											<i class="fa fa-quote-left fa-lg fa-pull-left " aria-hidden="true" style="font-size: 22px !important; font-style: italic; color:#6E6E6E;"></i> 
+											Alain Berset possède une page Facebook personnelle et un compte Twitter où plus de 70 000 abonnés le suivent depuis 2010. Il y publie en moyenne trois micromessages par jours.
+											<br><br>
+											<i class="fa fa-arrow-circle-o-right" aria-hidden="true" style="font-size: 22px !important; color:#6E6E6E;"></i> <span style= "color:#930025">FAUX.</span> Depuis la création de son compte en novembre 2010 et jusqu’au 26 décembre 2016, Alain Berset n’a tweeté «que» 525 fois.
+
+										</p>
+									</div>
+								</div>
+							</div> <!-- end back panel -->
+						</div> <!-- end card -->
+					</div> <!-- end card-container -->
+				</div>	
+
+<!-------------------------------------------				-->	
+				
+				<div class="col-md-6 col-xs-12">	
+					<div class="card-container manual-flip">
+						<div class="card">
+							<div class="front">
+								<div class="card-content">
+									<div class="main">
+										<h3 class="name">11 décembre</h3>
+										<p class="profession">ouverture de la conférence de l’OMC à Buenos Aires</p>
+
+										<p class="text-center" style="font-style: italic; padding: 5%;">
+
+											<span style= "color:#930025">Question 23:</span><br>
+											Vrai ou faux? Voici pourquoi:<br><br>
+
+											<i class="fa fa-quote-left fa-lg fa-pull-left " aria-hidden="true" style="font-size: 22px !important; font-style: italic; color:#6E6E6E;"></i> Cette réunion est très attendue, car elle sera la première de l’ère Donald Trump.<br><br>
+
+											<i class="fa fa-arrow-circle-o-right" aria-hidden="true" style="font-size: 22px !important; color:#6E6E6E;"></i> <span style= "color:#930025">VRAI.</span> Le scepticisme des Américains à l’égard du libre-échange a conduit le président élu à souligner les limites des accords.
+
+										</p>
+									</div>
+									<div class="footer">
+										<div class="rating">
+										</div>
+									</div>
+								</div>
+							</div>
+
+
+							<div class="back">
+								<div class="card-content">
+									<div class="main">
+										<h3 class="name">11 décembre</h3>
+										<p class="profession">ouverture de la conférence de l’OMC à Buenos Aires</p>
+
+										<p class="text-center" style="font-style: italic; padding: 5%;">
+
+											<span style= "color:#930025">Question 23:</span><br>
+											Vrai ou faux? Voici pourquoi:<br><br>
+
+											<i class="fa fa-quote-left fa-lg fa-pull-left " aria-hidden="true" style="font-size: 22px !important; font-style: italic; color:#6E6E6E;"></i> 
+											Interrogé sur NBC News sur sa vision de la politique commerciale, Donald Trump a évoqué l’instauration d’une «taxe» de 15 à 35% sur les produits mexicains, censée prévenir les délocalisations d’entreprises du sol américain.
+											<br><br>
+											<i class="fa fa-arrow-circle-o-right" aria-hidden="true" style="font-size: 22px !important; color:#6E6E6E;"></i> <span style= "color:#930025">VRAI.</span> Quand la NBC lui a rétorqué que l’initiative était strictement incompatible avec les règles de l’OMC, il a répondu: «Eh bien nous allons renégocier ou sortir de l’OMC. Ces accords commerciaux sont un désastre. L’Organisation mondiale du commerce est un désastre.»
+
+										</p>
+									</div>
+								</div>
+							</div> <!-- end back panel -->
+						</div> <!-- end card -->
+					</div> <!-- end card-container -->
+				</div>	
+
+<!-------------------------------------------				-->		
+				
+				<div class="col-md-6 col-xs-12">	
+					<div class="card-container manual-flip">
+						<div class="card">
+							<div class="front">
+								<div class="card-content">
+									<div class="main">
+										<h3 class="name">11 décembre</h3>
+										<p class="profession">ouverture de la conférence de l’OMC à Buenos Aires</p>
+
+										<p class="text-center" style="font-style: italic; padding: 5%;">
+
+											<span style= "color:#930025">Question 24:</span><br>
+											Vrai ou faux? Voici pourquoi:<br><br>
+
+											<i class="fa fa-quote-left fa-lg fa-pull-left " aria-hidden="true" style="font-size: 22px !important; font-style: italic; color:#6E6E6E;"></i> Si Roberto Azevedo, le directeur de l’OMC, tente de convaincre la nouvelle administration américaine de rester dans l’OMC, c’est qu’une sortie des Etats-Unis de l’institution créée en 1995 pourrait signer son arrêt de mort.<br><br>
+
+											<i class="fa fa-arrow-circle-o-right" aria-hidden="true" style="font-size: 22px !important; color:#6E6E6E;"></i> <span style= "color:#930025">VRAI.</span> Tout d’abord parce que Washington est le principal contributeur au budget et que si, par exemple, les Etats-Unis décidaient d’appliquer des tarifs douaniers prohibitifs à la Chine, ils se mettraient en infraction.
+
+										</p>
+									</div>
+									<div class="footer">
+										<div class="rating">
+										</div>
+									</div>
+								</div>
+							</div>
+
+
+							<div class="back">
+								<div class="card-content">
+									<div class="main">
+										<h3 class="name">11 décembre</h3>
+										<p class="profession">ouverture de la conférence de l’OMC à Buenos Aires</p>
+
+										<p class="text-center" style="font-style: italic; padding: 5%;">
+
+											<span style= "color:#930025">Question 24:</span><br>
+											Vrai ou faux? Voici pourquoi:<br><br>
+
+											<i class="fa fa-quote-left fa-lg fa-pull-left " aria-hidden="true" style="font-size: 22px !important; font-style: italic; color:#6E6E6E;"></i> 
+											L’élection de Donald Trump à la Maison-Blanche a jeté un froid dans les enceintes multilatérales. Une des grandes questions posées par cette élection concerne la politique commerciale du prochain président américain, qu’on prévoit hyperprotectionniste.
+											<br><br>
+											<i class="fa fa-arrow-circle-o-right" aria-hidden="true" style="font-size: 22px !important; color:#6E6E6E;"></i> <span style= "color:#930025">FAUX.</span> Trump voudra déployer un protectionnisme dit «raisonné», en protégeant une partie de l’industrie américaine par des droits de douane relevés, mais surtout en s’assurant que les traités  soient réciproques et non avec des concessions inéquitables aux pays émergents.
+
+										</p>
+									</div>
+								</div>
+							</div> <!-- end back panel -->
+						</div> <!-- end card -->
+					</div> <!-- end card-container -->
+				</div>	
+
+<!-------------------------------------------				-->		
+				
+			<script type="text/javascript">
+				
+					quiz.addQuestion({ 
+					id: "1",
+					title: "23 janvier: Ouverture du 48e Forum économique mondial, à Davos",
+					subtitle: "De ces deux affirmations, laquelle/lesquelles) est(sont) vraie(s)?",
+					prop1: "En 1971, Klaus Schwab, alors professeur d’économie à l’Université de Genève, invite 444 dirigeants d’entreprises d’Europe occidentale à participer au 1er Forum de Davos. Il entend familiariser les entreprises européennes avec les pratiques de management en vigueur aux Etats-Unis.",
+					prop2: "Quelques mois après la crise des «subprime» de 2007, patrons, chefs d’Etat et premiers ministres se retrouvent dans la station grisonne le 23 janvier 2008 pour le 38e Forum économique mondial. Klaus Schwab tient alors des propos très raisonnés.",
+					image: 'quiz/janvier.jpg',
+					video: null,
+					answers: [
+							{ 
+								text: "Les deux sont vraies",
+								result: 1,
+								score: 1
+							},
+							{ 
+								text: "Aucune n'est vraie",
+								result: 2,
+								score: 1
+							},
+							{ 
+								text: "La première uniquement",
+								result: 3,
+								score: 0
+							},
+							{ 
+								text: "La seconde uniquement",
+								result: 4,
+								score: 2
+							}
+						]
+					});
+
+					quiz.addQuestion({ 
+					id: "2",
+					title: "23 janvier: Ouverture du 48e Forum économique mondial, à Davos",
+					subtitle: "De ces deux affirmations, laquelle/lesquelles) est(sont) vraie(s)?",
+					prop1: "Le Forum a lieu chaque année à la fin janvier à Davos.",
+					prop2: "En janvier 2000, un millier d’altermondialistes manifestent dans les rues de Davos, faisant voler en éclats les vitres du Musée des sports d’hiver.",
+					image: 'quiz/janvier.jpg',
+					video: null,
+					answers: [
+							{ 
+								text: "Les deux sont vraies",
+								result: 1,
+								score: 0
+							},
+							{ 
+								text: "Aucune n'est vraie",
+								result: 2,
+								score: 2
+							},
+							{ 
+								text: "La première uniquement",
+								result: 3,
+								score: 1
+							},
+							{ 
+								text: "La seconde uniquement",
+								result: 4,
+								score: 1
+							}
+						]
+					});
+
+					quiz.addQuestion({ 
+					id: "3",
+					title: "9 février: Début des Jeux olympiques d’hiver de PyeongChang",
+					subtitle: "De ces deux affirmations, laquelle/lesquelles) est(sont) vraie(s)?",
+					prop1: "Les «nouveaux horizons» promis par le slogan de la ville sud-coréenne de Pyeongchang avaient conquis les membres du CIO dès le premier tour de l’élection de la ville hôte des Jeux d’hiver 2018, le 6 juillet 2011 à Durban.",
+					prop2: "Les autorités locales coréennes et le Comité international olympique utilisent généralement, pour la transcription, le camel case PyeongChang, à cause de la difficulté qu’il y a à prononcer le nom de ce toponyme.",
+					image: 'quiz/fevrier.svg',
+					video: null,
+					answers: [
+							{ 
+								text: "Les deux sont vraies",
+								result: 1,
+								score: 1
+							},
+							{ 
+								text: "Aucune n'est vraie",
+								result: 2,
+								score: 1
+							},
+							{ 
+								text: "La première uniquement",
+								result: 3,
+								score: 2
+							},
+							{ 
+								text: "La seconde uniquement",
+								result: 4,
+								score: 0
+							}
+						]
+					});
+
+					quiz.addQuestion({ 
+					id: "4",
+					title: "9 février: Début des Jeux olympiques d’hiver de PyeongChang",
+					subtitle: "De ces deux affirmations, laquelle/lesquelles) est(sont) vraie(s)?",
+					prop1: "Le chef de la mission suisse pour ces Jeux, le jeune retraité du curling Ralph Stoeckli, veut rester calme dans cette station de montagne sud-coréenne qui suscite quelque méfiance auprès des sportifs.",
+					prop2: "Entre calligraphie traditionnelle et dessin moderne, l’emblème de PyeongChang 2018 est très inspiré…",
+					image: 'quiz/fevrier.svg',
+					video: null,
+					answers: [
+							{ 
+								text: "Les deux sont vraies",
+								result: 1,
+								score: 2
+							},
+							{ 
+								text: "Aucune n'est vraie",
+								result: 2,
+								score: 0
+							},
+							{ 
+								text: "La première uniquement",
+								result: 3,
+								score: 1
+							},
+							{ 
+								text: "La seconde uniquement",
+								result: 4,
+								score: 1
+							}
+						]
+					});
+
+					quiz.addQuestion({ 
+					id: "5",
+					title: "18 mars: 20e anniversaire du «Temps»",
+					subtitle: "De ces deux affirmations, laquelle/lesquelles) est(sont) vraie(s)?",
+					prop1: "Le 18 mars 1998 paraît le premier numéro du Temps. Il est le produit de la fusion de la Gazette de Lausanne, du Nouveau Quotidien et du Journal de Genève.",
+					prop2: "Dans ce premier numéro, le Suisse Paul Reutlinger se demandait déjà si la survie de la compagnie aérienne Swissair était assurée.",
+					image: 'quiz/mars.svg',
+					video: null,
+					answers: [
+							{ 
+								text: "Les deux sont vraies",
+								result: 1,
+								score: 0
+							},
+							{ 
+								text: "Aucune n'est vraie",
+								result: 2,
+								score: 2
+							},
+							{ 
+								text: "La première uniquement",
+								result: 3,
+								score: 1
+							},
+							{ 
+								text: "La seconde uniquement",
+								result: 4,
+								score: 1
+							}
+						]
+					});
+
+					quiz.addQuestion({ 
+					id: "6",
+					title: "18 mars: 20e anniversaire du «Temps»",
+					subtitle: "De ces deux affirmations, laquelle/lesquelles) est(sont) vraie(s)?",
+					prop1: "En octobre 2013, les deux principaux actionnaires du journal, Ringier et Tamedia, mettent en vente Le Temps en espérant qu’il soit racheté par un acquéreur extérieur.",
+					prop2: "Un projet expérimental est mené depuis quelques mois par Le Temps autour de la valorisation de ses archives et de ses articles ayant remporté le plus d’audience (quantitative et qualitative), en vue d’une nouvelle publication sur son site. C’est un algorithme appelé «Fantôme» qui les identifie.",
+					image: 'quiz/mars.svg',
+					video: null,
+					answers: [
+							{ 
+								text: "Les deux sont vraies",
+								result: 1,
+								score: 1
+							},
+							{ 
+								text: "Aucune n'est vraie",
+								result: 2,
+								score: 1
+							},
+							{ 
+								text: "La première uniquement",
+								result: 3,
+								score: 2
+							},
+							{ 
+								text: "La seconde uniquement",
+								result: 4,
+								score: 0
+							}
+						]
+					});
+
+					quiz.addQuestion({ 
+					id: "7",
+					title: "15 avril (et 6 mai): Elections cantonales genevoises",
+					subtitle: "De ces deux affirmations, laquelle/lesquelles) est(sont) vraie(s)?",
+					prop1: "Le Conseil d’Etat genevois compte sept membres élus selon le système majoritaire: pour l’être dès le premier tour, les candidats doivent obtenir la moitié des bulletins valables plus une voix (majorité qualifiée). Si moins de sept candidat(e)s remplissent ces conditions, un second tour est organisé deux semaines après le premier afin d’attribuer les sièges restants, à la majorité simple (le plus grand nombre de voix).",
+					prop2: "Le Conseil général réuni à la place du Molard le 9 octobre 1846, après avoir dissous le Grand Conseil et accepté la démission du Conseil d’Etat précédent, élit un gouvernement provisoire présidé par James Fazy, qui marque le début de la Genève moderne.",
+					image: 'quiz/avril.png',
+					video: null,
+					answers: [
+							{ 
+								text: "Les deux sont vraies",
+								result: 1,
+								score: 1
+							},
+							{ 
+								text: "Aucune n'est vraie",
+								result: 2,
+								score: 1
+							},
+							{ 
+								text: "La première uniquement",
+								result: 3,
+								score: 0
+							},
+							{ 
+								text: "La seconde uniquement",
+								result: 4,
+								score: 2
+							}
+						]
+					});
+
+					quiz.addQuestion({ 
+					id: "8",
+					title: "15 avril (et 6 mai): Elections cantonales genevoises",
+					subtitle: "De ces deux affirmations, laquelle/lesquelles) est(sont) vraie(s)?",
+					prop1: "Au gouvernement depuis 2003, le PLR François Longchamp, actuel président du Conseil d’Etat, ne se représentera pas pour un nouveau mandat.",
+					prop2: "Contrairement au Parti socialiste avec sa pléthore de candidats, le PLR est confronté à une pénurie de prétendants solides pouvant accompagner Pierre Maudet au Conseil d’Etat, selon la journaliste du Temps Emilie Sombes.",
+					image: 'quiz/avril.png',
+					video: null,
+					answers: [
+							{ 
+								text: "Les deux sont vraies",
+								result: 1,
+								score: 0
+							},
+							{ 
+								text: "Aucune n'est vraie",
+								result: 2,
+								score: 2
+							},
+							{ 
+								text: "La première uniquement",
+								result: 3,
+								score: 1
+							},
+							{ 
+								text: "La seconde uniquement",
+								result: 4,
+								score: 1
+							}
+						]
+					});
+
+					quiz.addQuestion({ 
+					id: "9",
+					title: "Mai 2018: Mai 1968 fête son demi-siècle",
+					subtitle: "De ces deux affirmations, laquelle/lesquelles) est(sont) vraie(s)?",
+					prop1: "Dans la nuit du 10 au 11 mai 1968, des étudiants et des lycéens occupent le Quartier latin, à Paris, et dressent plusieurs dizaines de barricades qui sont finalement prises d’assaut, à partir de deux heures du matin, par plus de 6000 policiers.",
+					prop2: "Dans son éditorial de la Gazette de Lausanne du 13 mai 1968, Frank Bridel écrit que «les bagarres du Quartier latin confirment que nous assistons à une révolution de la jeunesse intellectuelle, […] où l’intellect cède souvent le pas au romantisme».",
+					image: 'quiz/mai.jpg',
+					video: null,
+					answers: [
+							{ 
+								text: "Les deux sont vraies",
+								result: 1,
+								score: 2
+							},
+							{ 
+								text: "Aucune n'est vraie",
+								result: 2,
+								score: 0
+							},
+							{ 
+								text: "La première uniquement",
+								result: 3,
+								score: 1
+							},
+							{ 
+								text: "La seconde uniquement",
+								result: 4,
+								score: 1
+							}
+						]
+					});
+
+					quiz.addQuestion({ 
+					id: "10",
+					title: "Mai 2018: Mai 1968 fête son demi-siècle",
+					subtitle: "De ces deux affirmations, laquelle/lesquelles) est(sont) vraie(s)?",
+					prop1: "Daniel Cohn-Bendit accède à la notoriété durant le mouvement, dont il est un des leaders. N’ayant pas à l’époque la nationalité française, il est ensuite expulsé en Allemagne par le gouvernement français, où il entamera une carrière politique auprès des écologistes durant les années 1980. D’où son surnom: Dany le Vert.",
+					prop2: "En Suisse, il n’y aura aucune manifestation lors du mois de mai 1968.",
+					image: 'quiz/mai.jpg',
+					video: null,
+					answers: [
+							{ 
+								text: "Les deux sont vraies",
+								result: 1,
+								score: 0
+							},
+							{ 
+								text: "Aucune n'est vraie",
+								result: 2,
+								score: 2
+							},
+							{ 
+								text: "La première uniquement",
+								result: 3,
+								score: 1
+							},
+							{ 
+								text: "La seconde uniquement",
+								result: 4,
+								score: 1
+							}
+						]
+					});
+
+					quiz.addQuestion({ 
+					id: "11",
+					title: "14 juin: Début du Mondial de football en Russie",
+					subtitle: "De ces deux affirmations, laquelle/lesquelles) est(sont) vraie(s)?",
+					prop1: "Le dimanche 17 juin, la Suisse entrera en lice. Contre le Brésil, la première équipe qualifiée en s’assurant dès le 28 mars 2017 de figurer parmi les quatre premiers de la zone Amérique du Sud. La Nati la rencontrera pour la première fois de l’histoire en Championnats du monde, à Rostov-sur-le-Don.",
+					prop2: "Selon la loi du 4 juillet 2016 promulguée par Vladimir Poutine, la carte d’identité de spectateur – ou «passeport du supporter», ou encore «ID-fan» – sera valable dix jours avant le début du tournoi et expirera dix jours après le dernier match de la compétition.",
+					image: 'quiz/juin.jpeg',
+					video: null,
+					answers: [
+							{ 
+								text: "Les deux sont vraies",
+								result: 1,
+								score: 1
+							},
+							{ 
+								text: "Aucune n'est vraie",
+								result: 2,
+								score: 1
+							},
+							{ 
+								text: "La première uniquement",
+								result: 3,
+								score: 0
+							},
+							{ 
+								text: "La seconde uniquement",
+								result: 4,
+								score: 2
+							}
+						]
+					});
+
+					quiz.addQuestion({ 
+					id: "12",
+					title: "14 juin: Début du Mondial de football en Russie",
+					subtitle: "De ces deux affirmations, laquelle/lesquelles) est(sont) vraie(s)?",
+					prop1: "Zabivaka est le nom de la mascotte officielle de la Coupe du monde de la FIFA et signifie «celui qui marque» en russe.",
+					prop2: "L’équipe de Serbie, qui figure dans le groupe de la Suisse avec le Brésil et le Costa Rica, n’a pas eu d’existence propre jusqu’en 2004.",
+					image: 'quiz/juin.jpeg',
+					video: null,
+					answers: [
+							{ 
+								text: "Les deux sont vraies",
+								result: 1,
+								score: 2
+							},
+							{ 
+								text: "Aucune n'est vraie",
+								result: 2,
+								score: 0
+							},
+							{ 
+								text: "La première uniquement",
+								result: 3,
+								score: 1
+							},
+							{ 
+								text: "La seconde uniquement",
+								result: 4,
+								score: 1
+							}
+						]
+					});
+
+					quiz.addQuestion({ 
+					id: "13",
+					title: "19 juillet: Début du Verbier Festival",
+					subtitle: "De ces deux affirmations, laquelle/lesquelles) est(sont) vraie(s)?",
+					prop1: "La manifestation fête ses 25 ans en 2018. A cette occasion, c’est le chef russe Valeri Guerguiev qui succède à James Levine à la direction musicale de la manifestation.",
+					prop2: "Temps fort de la 25e édition, le 25 juillet 2018, la soirée d’anniversaire réunira une trentaine d’artistes mondialement connus, parmi lesquels Martha Argerich, les frères Capuçon et Maxim Vengerov.",
+					image: 'quiz/juillet.jpg',
+					video: null,
+					answers: [
+							{ 
+								text: "Les deux sont vraies",
+								result: 1,
+								score: 1
+							},
+							{ 
+								text: "Aucune n'est vraie",
+								result: 2,
+								score: 1
+							},
+							{ 
+								text: "La première uniquement",
+								result: 3,
+								score: 0
+							},
+							{ 
+								text: "La seconde uniquement",
+								result: 4,
+								score: 2
+							}
+						]
+					});
+
+					quiz.addQuestion({ 
+					id: "14",
+					title: "19 juillet: Début du Verbier Festival",
+					subtitle: "De ces deux affirmations, laquelle/lesquelles) est(sont) vraie(s)?",
+					prop1: "En 2015, Martha Argerich, précisément, avait osé enchaîner successivement les dernières Sonates de Haydn, Beethoven, Mozart et Schubert en une seule soirée dans le val de Bagnes.",
+					prop2: "Un des grands événements de l’édition 2015 également, c’était le baryton-basse allemand Thomas Quasthoff, qui avait fait ses débuts de chef dans la Passion selon saint Matthieu de Bach",
+					image: 'quiz/juillet.jpg',
+					video: null,
+					answers: [
+							{ 
+								text: "Les deux sont vraies",
+								result: 1,
+								score: 1
+							},
+							{ 
+								text: "Aucune n'est vraie",
+								result: 2,
+								score: 1
+							},
+							{ 
+								text: "La première uniquement",
+								result: 3,
+								score: 0
+							},
+							{ 
+								text: "La seconde uniquement",
+								result: 4,
+								score: 2
+							}
+						]
+					});
+
+					quiz.addQuestion({ 
+					id: "15",
+					title: "11 août: Tour des Stations – Valais",
+					subtitle: "De ces deux affirmations, laquelle/lesquelles) est(sont) vraie(s)?",
+					prop1: "Cette nouvelle course entend réunir pour son baptême du feu 2000 cyclistes sur trois parcours valaisans (220, 130 et 50 kilomètres).",
+					prop2: "Soutenu par les stations de Verbier, Crans-Montana, Nendaz, Ovronnaz, Anzère, Vercorin, Nax, Saint-Martin, Hérémence, Les Collons, Veysonnaz et La Tzoumaz, le Tour des Stations parcourra les paysages du Valais, des vignobles à la haute montagne.",
+					image: 'quiz/aout.jpg',
+					video: null,
+					answers: [
+							{ 
+								text: "Les deux sont vraies",
+								result: 1,
+								score: 1
+							},
+							{ 
+								text: "Aucune n'est vraie",
+								result: 2,
+								score: 1
+							},
+							{ 
+								text: "La première uniquement",
+								result: 3,
+								score: 2
+							},
+							{ 
+								text: "La seconde uniquement",
+								result: 4,
+								score: 0
+							}
+						]
+					});
+
+					quiz.addQuestion({ 
+					id: "16",
+					title: "11 août: Tour des Stations – Valais",
+					subtitle: "De ces deux affirmations, laquelle/lesquelles) est(sont) vraie(s)?",
+					prop1: "Les pratiquants de vélo à assistance électrique pourront participer à la compétition.",
+					prop2: "Le Vieux-Pays n’est pas un territoire vierge d’activités cyclistes. La Cyclosportive des vins du Valais, par exemple, réunit plus de 1000 participants depuis cinq ans.",
+					image: 'quiz/aout.jpg',
+					video: null,
+					answers: [
+							{ 
+								text: "Les deux sont vraies",
+								result: 1,
+								score: 2
+							},
+							{ 
+								text: "Aucune n'est vraie",
+								result: 2,
+								score: 0
+							},
+							{ 
+								text: "La première uniquement",
+								result: 3,
+								score: 1
+							},
+							{ 
+								text: "La seconde uniquement",
+								result: 4,
+								score: 1
+							}
+						]
+					});
+
+					quiz.addQuestion({ 
+					id: "17",
+					title: "18 septembre: Exposition «Picasso, bleu et rose» au Musée d’Orsay",
+					subtitle: "De ces deux affirmations, laquelle/lesquelles) est(sont) vraie(s)?",
+					prop1: "Le Musée d’Orsay et le Musée national Picasso-Paris s’associent pour réaliser cette exposition événement qui ira ensuite au Kunsthaus de Bâle.",
+					prop2: "La période rose est une courte période (1904-1906) de la production artistique de Pablo Picasso. Elle suit la période africaine et précède la période bleue.",
+					image: 'quiz/septembre.jpg',
+					video: null,
+					answers: [
+							{ 
+								text: "Les deux sont vraies",
+								result: 1,
+								score: 0
+							},
+							{ 
+								text: "Aucune n'est vraie",
+								result: 2,
+								score: 2
+							},
+							{ 
+								text: "La première uniquement",
+								result: 3,
+								score: 1
+							},
+							{ 
+								text: "La seconde uniquement",
+								result: 4,
+								score: 1
+							}
+						]
+					});
+
+					quiz.addQuestion({ 
+					id: "18",
+					title: "18 septembre: Exposition «Picasso, bleu et rose» au Musée d’Orsay",
+					subtitle: "De ces deux affirmations, laquelle/lesquelles) est(sont) vraie(s)?",
+					prop1: "La période bleue est plutôt barcelonaise. Le bleu envahit les tableaux de Picasso, mais ne présente qu’une valeur symbolique. Dès 1904, les modèles du peintre ne changent guère, mais sa palette se réchauffe progressivement.",
+					prop2: "Le Musée d’Orsay a ouvert ses portes en 1986 dans une gare reconvertie, selon la volonté précédemment émise du président de la République Georges Pompidou, grand amateur d’art.",
+					image: 'quiz/septembre.jpg',
+					video: null,
+					answers: [
+							{ 
+								text: "Les deux sont vraies",
+								result: 1,
+								score: 1
+							},
+							{ 
+								text: "Aucune n'est vraie",
+								result: 2,
+								score: 1
+							},
+							{ 
+								text: "La première uniquement",
+								result: 3,
+								score: 2
+							},
+							{ 
+								text: "La seconde uniquement",
+								result: 4,
+								score: 0
+							}
+						]
+					});
+
+					quiz.addQuestion({ 
+					id: "19",
+					title: "7 et 28 octobre: Elections présidentielle et législatives au Brésil",
+					subtitle: "De ces deux affirmations, laquelle/lesquelles) est(sont) vraie(s)?",
+					prop1: "Luiz Inacio Lula da Silva, dit «Lula», se dit prêt à reprendre le pouvoir dans le pays.",
+					prop2: "Condamné à 10 ans de prison le 12 juillet 2017 et visé par cinq autres procédures, Lula nie toutes les accusations en bloc et dénonce un complot pour l’empêcher de se présenter à cette élection. Il a fait recours contre ce jugement et pourrait donc ne jamais se présenter s’il fait effectivement de la prison.",
+					image: 'quiz/octobre.jpg',
+					video: null,
+					answers: [
+							{ 
+								text: "Les deux sont vraies",
+								result: 1,
+								score: 1
+							},
+							{ 
+								text: "Aucune n'est vraie",
+								result: 2,
+								score: 1
+							},
+							{ 
+								text: "La première uniquement",
+								result: 3,
+								score: 2
+							},
+							{ 
+								text: "La seconde uniquement",
+								result: 4,
+								score: 0
+							}
+						]
+					});
+
+					quiz.addQuestion({ 
+					id: "20",
+					title: "7 et 28 octobre: Elections présidentielle et législatives au Brésil",
+					subtitle: "De ces deux affirmations, laquelle/lesquelles) est(sont) vraie(s)?",
+					prop1: "Avec son admiration déclarée pour la dictature militaire qui a régné au Brésil de 1964 à 1985, Jair Bolsonaro, 62 ans, fait figure d’épouvantail dans cette présidentielle.",
+					prop2: "La Constitution brésilienne de 1988 est la sixième de l’Etat brésilien. C’est le Congrès élu en 1986 qui avait reçu du président José Sarney la tâche d’en élaborer une nouvelle, après deux décennies de dictature.",
+					image: 'quiz/octobre.jpg',
+					video: null,
+					answers: [
+							{ 
+								text: "Les deux sont vraies",
+								result: 1,
+								score: 1
+							},
+							{ 
+								text: "Aucune n'est vraie",
+								result: 2,
+								score: 1
+							},
+							{ 
+								text: "La première uniquement",
+								result: 3,
+								score: 2
+							},
+							{ 
+								text: "La seconde uniquement",
+								result: 4,
+								score: 0
+							}
+						]
+					});
+
+					quiz.addQuestion({ 
+					id: "21",
+					title: "11 novembre: Centenaire de l’armistice de 1918",
+					subtitle: "De ces deux affirmations, laquelle/lesquelles) est(sont) vraie(s)?",
+					prop1: "L’armistice de 1918, signé le 11 novembre à 5h15, marque la fin des combats de la Première Guerre mondiale, la victoire des Alliés et la capitulation de l’Allemagne.",
+					prop2: "La demande d’armistice étant venue des représentants civils et non militaires de l’Allemagne, ces derniers échappent à l’infamie de la défaite.",
+					image: 'quiz/novembre.jpg',
+					video: null,
+					answers: [
+							{ 
+								text: "Les deux sont vraies",
+								result: 1,
+								score: 1
+							},
+							{ 
+								text: "Aucune n'est vraie",
+								result: 2,
+								score: 1
+							},
+							{ 
+								text: "La première uniquement",
+								result: 3,
+								score: 0
+							},
+							{ 
+								text: "La seconde uniquement",
+								result: 4,
+								score: 1
+							}
+						]
+					});
+
+					quiz.addQuestion({ 
+					id: "22",
+					title: "11 novembre: Centenaire de l’armistice de 1918",
+					subtitle: "De ces deux affirmations, laquelle/lesquelles) est(sont) vraie(s)?",
+					prop1: "L’armistice est signé dans un wagon des chemins de fer français, qui sera ensuite transformé en musée. En 1940, Adolf Hitler le fait emmener à Berlin et il sera détruit par les SS pour éviter qu’il ne soit restitué.",
+					prop2: "Emmanuel Macron entend remobiliser les Français en 2018 pour le dernier acte du plus grand cycle commémoratif organisé en France depuis le bicentenaire de la ­Révolution.",
+					image: 'quiz/novembre.jpg',
+					video: null,
+					answers: [
+							{ 
+								text: "Les deux sont vraies",
+								result: 1,
+								score: 2
+							},
+							{ 
+								text: "Aucune n'est vraie",
+								result: 2,
+								score: 0
+							},
+							{ 
+								text: "La première uniquement",
+								result: 3,
+								score: 1
+							},
+							{ 
+								text: "La seconde uniquement",
+								result: 4,
+								score: 1
+							}
+						]
+					});
+
+					quiz.addQuestion({ 
+					id: "23",
+					title: "13 décembre: Ueli Maurer président de la Confédération 2019",
+					subtitle: "De ces deux affirmations, laquelle/lesquelles) est(sont) vraie(s)?",
+					prop1: "A quelques jours près du dixième anniversaire de son élection au Conseil fédéral, l’UDC zurichois accédera à la présidence de la Confédération pour la deuxième fois de sa carrière.",
+					prop2: "En 2013, Ueli Maurer avait décidé d’être sur Facebook, page qu’il avait inaugurée en postant son allocution télévisée de Nouvel An.",
+					image: 'quiz/decembre.jpg',
+					video: null,
+					answers: [
+							{ 
+								text: "Les deux sont vraies",
+								result: 1,
+								score: 2
+							},
+							{ 
+								text: "Aucune n'est vraie",
+								result: 2,
+								score: 0
+							},
+							{ 
+								text: "La première uniquement",
+								result: 3,
+								score: 1
+							},
+							{ 
+								text: "La seconde uniquement",
+								result: 4,
+								score: 1
+							}
+						]
+					});
+
+					quiz.addQuestion({ 
+					id: "24",
+					title: "13 décembre: Ueli Maurer président de la Confédération 2019",
+					subtitle: "De ces deux affirmations, laquelle/lesquelles) est(sont) vraie(s)?",
+					prop1: "En principe, Ueli Maurer devrait se retirer au terme de la législature, en décembre 2019. Il aura alors 65 ans, l’âge de toucher l’AVS, et achèvera cette année présidentielle. Le tout bon moment.",
+					prop2: "Le conseiller fédéral s’était lâché en 2014 lors d’une conférence sur le Gripen à Zoug en faisant une blague misogyne.",
+					image: 'quiz/decembre.jpg',
+					video: null,
+					answers: [
+							{ 
+								text: "Les deux sont vraies",
+								result: 1,
+								score: 1
+							},
+							{ 
+								text: "Aucune n'est vraie",
+								result: 2,
+								score: 1
+							},
+							{ 
+								text: "La première uniquement",
+								result: 3,
+								score: 0
+							},
+							{ 
+								text: "La seconde uniquement",
+								result: 4,
+								score: 2
+							}
+						]
+					});
+
+					
+
+
+				
+
+			quiz.addResults([
+					{
+						id: 1,
+						text: "De 0 à 8 points: Caramba, encore raté!</b><br>Eh bien, on ne peut pas dire que ce soit brillant! Soit vous avez répondu complètement au hasard ou à l’intuition (mal placée), soit vous êtes tombé dans tous les astucieux pièges qui étaient tendus dans ce parcours du combattant historique.<br /> Mais, tout de même: ce truc qui s’appelle Internet, vous connaissez? En ayant pris le soin de surfer intelligemment, vous auriez pu réaliser un bien meilleur score et vous éviter la place du cancre. Il est urgent de réviser vos classiques, afin de ne pas avoir l’air de tomber de la lune en 2017."
+					},
+					{
+						id: 2,
+						text: "De 9 à 16 points: Peut mieux faire</b><br>Pas mal, pas mal! Vous vous êtes donné de la peine et en avez eu, surtout si vous ne parvenez pas aux 12 points qui représentent l’exacte moyenne entre les plus nuls et les plus brillants. <br />De toute manière, vous vous êtes sans doute montré un peu trop sûr de vous et, vous aussi, vous êtes fié à votre savoir, que vous surestimez un brin, non? Mais le test n’étant pas des plus faciles, vous vous en tirez fort honorablement. Davantage de curiosité et une attention plus soutenue à la presse vous permettraient de confiner à l’excellence."
+					},
+					{
+						id: 3,
+						text: "De 17 à 24 points: Expert en futur antérieur</b><br>Chapeau! Vous avez une excellente culture générale, doublée d’une mémoire (presque) infaillible des petits et grands moments de l’Histoire.<br /> En cas de doute, vous savez aussi vous tourner vers des sources d’information simples, comme Wikipédia. Ou plus élaborées, comme LeTemps.ch et LeTempsArchives.ch, où l’on peut trouver toutes les réponses à ce test de connaissances. Tout au long de 2017, vous pourrez ainsi briller dans les salons au moment où surviendront les événements qui figurent ici. Encore bravo et Bonne année!"
+					}
+				]);
+				
+			</script>
+
+
+	
+
+
+		{{ block('footer_brand') }}
+        <script src="js/main.js"></script>
+
+
+		
+	</body>
+	
+</html>

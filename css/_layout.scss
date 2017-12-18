@@ -1,0 +1,302 @@
+aside
+{
+	width: 35%;
+	height: 100%; 
+	float: left;
+	background: red; 
+	position: fixed;
+	background: url('../img/quiz-bg.jpg');
+	background-position: 2% 50% !important;
+	background-size: cover;
+
+	@include breakpoint(xs) {   
+		height: 19%;
+        width: 100%;   
+        clear: both; 
+        background-position: 15% 17% !important;
+    }
+}
+
+div.content
+{
+	width: 65%;
+	height: 100%;
+	float: right;
+	background: #fbfbfb; 
+	padding: 2rem 4rem 2rem 4rem;
+	//overflow: hidden; 
+
+	@include breakpoint(xs) {   
+        height: calc(100% - 40px);
+        width: 100%;   
+        clear: both;     
+        position: absolute;
+        top: 40px;
+        padding: 2rem 2rem 2rem 2rem;
+    }
+
+	
+}
+
+div.intro
+{
+	position: absolute;
+	width: 65%;
+	height: calc(100% - 57px);
+	bottom: 0;
+	right: 0;
+	background: #f8f8f8;
+	padding: 3rem 4rem 2rem 4rem;
+	z-index: 2;
+
+	@include breakpoint(xs) {  
+
+        height: initial;
+        width: 100%;   
+        padding: 3rem 2rem 2rem 2rem;     
+        bottom: auto;
+        top: 25%;
+    }
+
+	h6 
+	{
+		font-family: 'Oswald';
+		font-size: 7rem;
+		color: #e6e6e6;
+		margin-bottom: 3rem;
+
+		@include breakpoint(xs) {   
+	        font-size: 4rem;  
+	        text-align: center;  
+	        margin-bottom: 2rem;   
+	    }
+	}
+
+	h1 
+	{
+		font-family: 'montserratbold';
+		color: #787878;
+		background: transparent;
+		color: $black;
+		text-shadow: none;
+		text-align: left;
+		font-size: 1.8rem;
+		line-height: 2.3rem;
+		margin-bottom: 1.2rem;
+		margin-top: 1.2rem;
+		//border-bottom: 1px solid gray;
+	}
+
+	p 
+	{
+		text-align: left;
+		vertical-align: top;
+		height: auto;
+		font-family: 'montserratultra_light';
+		font-size: 17px;
+		line-height: calc(17px * 1.4);
+		margin-bottom: 1.4rem;
+
+		&.credits
+		{
+			font-size: 17px;
+			line-height: calc(17px * 1.4);
+			opacity: 0.6;
+		}
+
+	}
+}
+
+
+
+
+
+
+
+div.questions
+{
+	position: relative;
+
+}
+
+div.results
+{
+	@include breakpoint(xs) {   
+       
+      	padding-top: 3rem; 
+    }
+
+	h6 
+	{
+		font-family: 'Oswald'; 
+		font-size: 7rem;
+		color: #e6e6e6;
+		margin-bottom: 3rem;
+
+		@include breakpoint(xs) {   
+	        font-size: 4rem;  
+	        text-align: center;  
+	        margin-bottom: 2rem;  
+	       // margin-top: 3rem; 
+	    }
+	}
+
+	h1 
+	{
+		font-family: 'montserratbold';
+		color: #787878;
+		background: transparent;
+		color: $black;
+		text-shadow: none;
+		text-align: left;
+		font-size: 1.8rem;
+		line-height: 2.3rem;
+		margin-bottom: 1.2rem;
+		margin-top: 1.2rem;
+		//border-bottom: 1px solid gray;
+	}
+
+	p 
+	{
+		text-align: left;
+		vertical-align: top;
+		height: auto;
+		font-family: 'montserratultra_light';
+		font-size: 16px;
+		line-height: calc(16px * 1.4);
+		margin-bottom: 1.4rem;
+
+	}
+
+}
+
+div.question
+{
+	position: absolute;
+	top: 0;
+	background: #fbfbfb;
+	padding-bottom: 200px;
+
+	h6
+	{
+		font-size: 1.7rem;
+		color: #b3b3b3;
+		font-family: 'montserrathairline';
+
+		@include breakpoint(xs) {   
+	        text-align: center;
+	        //display: none;
+	    }
+	}
+
+	h1 
+	{
+		font-family: 'montserratbold';
+		color: #787878;
+		background: transparent;
+		color: $black;
+		text-shadow: none;
+		text-align: left;
+		font-size: 1.8rem;
+		line-height: 2.3rem;
+		margin-bottom: 1.2rem;
+		margin-top: 1.2rem;
+
+		@include breakpoint(xs) {   
+	        font-size: 1.3rem;
+	        line-height: 1.6rem;
+	        margin-bottom: 0.7rem;
+	    }
+	}
+
+	img
+	{
+		width: 50%;
+		margin-bottom: 15px;
+
+		@include breakpoint(xs) {   
+	        margin-left: auto;
+	        margin-right: auto;
+	    }
+	}
+
+	div.video-wrapper
+	{
+	    position: relative;
+	    padding-bottom: 27.25%; /* 16:9 */
+	    padding-top: 9px;
+	    height: 0;
+	    margin-bottom: 15px;
+
+	    iframe
+	    {
+	        position: absolute;
+	        top: 0;
+	        left: 0;
+	        width: 50%;
+	        height: 100%;
+
+	        @include breakpoint(xs) {   
+		        left: 25%;
+		    }
+	    }
+	}
+}
+
+div.answers
+{
+	width: 100%;
+	height: auto;
+
+	div.answer
+	{
+		background: #f2f2f2;
+		min-height: auto !important;
+		cursor: pointer;
+
+		&:hover
+		{
+			background: #eeeeee;
+		}
+
+		div.wrapper
+		{
+			margin: 0;
+			width: 90%;
+			float: left;
+			padding: 10px;
+
+			div.table
+			{
+
+				div.text 
+				{
+					text-align: left;
+					vertical-align: top;
+					height: auto;
+					font-family: 'montserratultra_light';
+					font-size: 1rem;
+					line-height: 1.4rem;
+				}
+			}
+		}
+
+		.footer
+		{
+			width: 10%;
+			float: left;
+
+			.checkbox
+			{
+				height: 20px;
+			    width: 20px;
+			    background: #FFF;
+			    float: right; 
+			    margin: 12px 12px 0px 0px;
+			    box-shadow: none;
+			    position: relative;
+			}
+		}
+		
+	}
+}

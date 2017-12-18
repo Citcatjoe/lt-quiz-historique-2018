@@ -1,0 +1,118 @@
+button {
+    display: block;
+    background: #930025;
+    font-family: 'montserratregular';
+    font-size: 0.8rem;
+    color: #fff;
+    text-transform: uppercase;
+    border-radius: 2px;
+    padding: 0.88rem 0.75rem;
+    border: none;
+    margin-top: 0.6rem;
+    margin-bottom: 3rem;
+    cursor: pointer;
+}
+.question {
+    position: absolute;
+    top: 0;
+    background: #fbfbfb;
+    padding-bottom: 200px;
+}
+.question h6 {
+    font-size: 1.7rem;
+    color: #930025;
+    font-family: 'montserrathairline';
+}
+.question h1 {
+    font-family: 'montserratbold';
+    background: transparent;
+    color: #000;
+    text-shadow: none;
+    text-align: left;
+    line-height: 2.3rem;
+    margin-bottom: 1.2rem;
+    margin-top: 1.2rem;
+    font-weight: bold;
+    padding: 10px 0px;
+}
+h2 {
+    font-size: 18px;
+    line-height: 24px;
+    margin-bottom: 15px;
+    font-weight: 500;
+    font-style: normal;
+    font-family: 'Georgia';
+}
+.intro h6 {
+    font-family: 'Oswald';
+    font-size: 7rem;
+    color: #e6e6e6;
+    margin-bottom: 3rem;
+}
+.intro h1 {
+    font-family: 'montserratbold';
+    color: #787878;
+    background: transparent;
+    color: #000;
+    text-shadow: none;
+    text-align: left;
+    font-size: 1.8rem;
+    line-height: 2.3rem;
+    margin-bottom: 1.2rem;
+    margin-top: 1.2rem;
+}
+.intro p {
+    text-align: left;
+    vertical-align: top;
+    height: auto;
+    font-family: 'montserratultra_light';
+    font-size: 17px;
+    line-height: calc(17px * 1.4);
+    margin-bottom: 1.4rem;
+}
+.intro p.credits {
+    font-size: 17px;
+    line-height: calc(17px * 1.4);
+    opacity: 0.6;
+}
+.answers .answer .wrapper .table .text {
+    text-align: left;
+    vertical-align: top;
+    height: auto;
+    font-family: 'montserratultra_light';
+    font-size: 1rem;
+    line-height: 1.4rem;
+    font-weight: 900;
+    -webkit-font-smoothing: antialiased;
+    display: table-cell;
+}
+.results h1 {
+    font-family: 'montserratbold';
+    background: transparent;
+    color: #000;
+    text-shadow: none;
+    text-align: left;
+    font-size: 1.8rem;
+    line-height: 2.3rem;
+    margin-bottom: 1.2rem;
+    margin-top: 1.2rem;
+}
+h4 {
+    font-size: 1.3rem;
+    font-family: 'montserratbold';
+    margin-bottom: 1rem;
+    margin-top: 1rem;
+}
+
+.table {
+    margin-bottom: 0;
+}
+body {
+    margin-top: 0;
+}
+.card-container, .front, .back {
+    width: 100%;
+    min-height: 585px;
+    border-radius: 4px;
+    cursor: pointer;
+}
