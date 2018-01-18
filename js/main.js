@@ -14,7 +14,11 @@ jQuery(document).ready(function($)
 	$('.content').css('opacity', 0)
 
 	$("button").on('click', function(e) {
-
+		// THIS IS EXECUTED DEPENDING ON WINDOW WIDTH
+		if($(window).width() < 500)
+		{
+			$('aside').hide();
+		}
 		
 		$('.intro').fadeOut();
 		setTimeout(function() 
